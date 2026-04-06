@@ -188,7 +188,7 @@
 // ──────────────────────────────────────────────
 // 상태
 // ──────────────────────────────────────────────
-let map, markers = {}, activeDay = "all", infoWindow;
+let map, markers = {}, polylines = [], activeDay = "all", infoWindow;
 const ALL_DAYS = [0, 1, 2, 3, 4, 5];
 
 // ──────────────────────────────────────────────
@@ -218,9 +218,11 @@ function initMap() {
 // 마커 렌더링
 // ──────────────────────────────────────────────
 function renderMarkers() {
-  // 기존 마커 제거
+  // 기존 마커·폴리라인 제거
   Object.values(markers).forEach(m => m.setMap(null));
   markers = {};
+  polylines.forEach(p => p.setMap(null));
+  polylines = [];
 
   const filtered = activeDay === "all"
     ? LOCATIONS
@@ -283,7 +285,7 @@ function drawRoutes(filtered) {
 
     if (dayLocs.length < 2) return;
 
-    new google.maps.Polyline({
+    const pl = new google.maps.Polyline({
       path: dayLocs.map(l => ({ lat: l.lat, lng: l.lng })),
       geodesic: true,
       strokeColor: DAY_COLORS[d].color,
@@ -291,6 +293,7 @@ function drawRoutes(filtered) {
       strokeWeight: 3,
       map,
     });
+    polylines.push(pl);
   });
 }
 
@@ -306,12 +309,11 @@ function renderTabs() {
   const tabsEl = document.getElementById("dayTabs");
   const tabs = [
     { key: "all", label: "전체" },
-    { key: 1, label: "DAY 1", color: DAY_COLORS[1].color },
-    { key: 2, label: "DAY 2", color: DAY_COLORS[2].color },
-    { key: 3, label: "DAY 3", color: DAY_COLORS[3].color },
-    { key: 4, label: "DAY 4", color: DAY_COLORS[4].color },
-    { key: 5, label: "DAY 5", color: DAY_COLORS[5].color },
-    { key: "unassigned", label: "미배정" },
+    { key: 1, label: "D1 · 4/24", color: DAY_COLORS[1].color },
+    { key: 2, label: "D2 · 4/25", color: DAY_COLORS[2].color },
+    { key: 3, label: "D3 · 4/26", color: DAY_COLORS[3].color },
+    { key: 4, label: "D4 · 4/27", color: DAY_COLORS[4].color },
+    { key: 5, label: "D5 · 4/28", color: DAY_COLORS[5].color },
   ];
 
   tabsEl.innerHTML = tabs.map(t => `
