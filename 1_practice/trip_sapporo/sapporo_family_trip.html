@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🗾 삿포로 4박5일 가족여행</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif; background: #f0f4f8; color: #2d3748; }
+
+  /* 히어로 */
+  .hero { background: linear-gradient(135deg, #1e3a5f 0%, #2563eb 50%, #60a5fa 100%); color: white; padding: 36px 20px 28px; text-align: center; }
+  .hero h1 { font-size: 22px; font-weight: 800; margin-bottom: 6px; letter-spacing: -0.5px; }
+  .hero p { font-size: 13px; opacity: 0.88; }
+  .badge-row { display: flex; justify-content: center; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
+  .badge { background: rgba(255,255,255,0.22); border-radius: 20px; padding: 4px 12px; font-size: 12px; font-weight: 600; }
+
+  /* 레이아웃 */
+  .container { max-width: 480px; margin: 0 auto; padding: 16px; }
+
+  /* 데이 카드 */
+  .day-card { background: white; border-radius: 16px; margin-bottom: 16px; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,0.07); }
+  .day-header { padding: 14px 18px 12px; display: flex; align-items: center; gap: 10px; }
+  .day-header.d1 { background: linear-gradient(90deg, #f97316, #fb923c); }
+  .day-header.d2 { background: linear-gradient(90deg, #8b5cf6, #a78bfa); }
+  .day-header.d3 { background: linear-gradient(90deg, #0ea5e9, #38bdf8); }
+  .day-header.d4 { background: linear-gradient(90deg, #10b981, #34d399); }
+  .day-header.d5 { background: linear-gradient(90deg, #f43f5e, #fb7185); }
+  .day-label { background: rgba(255,255,255,0.28); color: white; font-size: 11px; font-weight: 800; border-radius: 8px; padding: 2px 9px; white-space: nowrap; }
+  .day-title { color: white; font-size: 12px; font-weight: 700; line-height: 1.4; }
+
+  /* 호텔 배너 */
+  .hotel-banner { background: linear-gradient(90deg, #1e3a5f, #2563eb); border-radius: 10px; padding: 8px 14px; margin: 6px 16px 4px; }
+  .hotel-banner p { color: white; font-size: 12px; font-weight: 600; }
+  .hotel-banner span { opacity: 0.75; font-weight: 400; }
+
+  /* 식사 구분 배너 */
+  .meal-section { display: flex; gap: 6px; padding: 8px 16px 0; flex-wrap: wrap; }
+  .meal-badge { font-size: 11px; font-weight: 700; border-radius: 6px; padding: 3px 10px; }
+  .meal-badge.breakfast { background: #fef3c7; color: #d97706; }
+  .meal-badge.lunch { background: #dcfce7; color: #16a34a; }
+  .meal-badge.dinner { background: #fce7f3; color: #be185d; }
+
+  /* 타임라인 */
+  .timeline { padding: 4px 0 8px; }
+  .tl-group { }
+  .tl-group-label { font-size: 10px; font-weight: 800; color: white; padding: 3px 14px 2px; margin: 4px 16px 0; border-radius: 6px; display: inline-block; }
+  .tl-group-label.lb-transport { background: #6366f1; }
+  .tl-group-label.lb-breakfast { background: #f59e0b; }
+  .tl-group-label.lb-lunch { background: #22c55e; }
+  .tl-group-label.lb-dinner { background: #ec4899; }
+  .tl-group-label.lb-activity { background: #0ea5e9; }
+  .tl-group-label.lb-spot { background: #64748b; }
+  .tl-group-label.lb-night { background: #6366f1; }
+
+  .stop { display: flex; gap: 0; padding: 0 16px; }
+  .stop-left { display: flex; flex-direction: column; align-items: center; width: 36px; flex-shrink: 0; }
+  .dot { width: 12px; height: 12px; border-radius: 50%; border: 2.5px solid #cbd5e1; background: white; margin-top: 14px; flex-shrink: 0; }
+  .dot.food   { border-color: #f97316; }
+  .dot.cafe   { border-color: #8b5cf6; }
+  .dot.spot   { border-color: #0ea5e9; }
+  .dot.hotel  { border-color: #10b981; }
+  .dot.night  { border-color: #6366f1; }
+  .dot.exp    { border-color: #f43f5e; }
+  .dot.trs    { border-color: #6366f1; }
+  .dot.cvs    { border-color: #f59e0b; }
+  .dot.onsen  { border-color: #10b981; }
+  .dot.lunch  { border-color: #22c55e; }
+  .line { width: 2px; background: #e2e8f0; flex: 1; margin-top: 2px; }
+  .stop:last-child .line { display: none; }
+
+  .stop-right { flex: 1; padding: 10px 0 10px 6px; }
+  .stop-time { font-size: 11px; color: #94a3b8; font-weight: 600; margin-bottom: 2px; }
+  .stop-name { font-size: 14px; font-weight: 700; color: #1e293b; margin-bottom: 3px; }
+  .stop-name .tag { font-size: 10px; font-weight: 700; border-radius: 6px; padding: 1px 7px; margin-left: 5px; vertical-align: middle; }
+  .tag-food   { background: #fff7ed; color: #ea580c; }
+  .tag-cafe   { background: #f5f3ff; color: #7c3aed; }
+  .tag-spot   { background: #eff6ff; color: #1d4ed8; }
+  .tag-hotel  { background: #f0fdf4; color: #16a34a; }
+  .tag-night  { background: #eef2ff; color: #4338ca; }
+  .tag-exp    { background: #fff1f2; color: #e11d48; }
+  .tag-trs    { background: #eef2ff; color: #4338ca; }
+  .tag-cvs    { background: #fffbeb; color: #d97706; }
+  .tag-onsen  { background: #f0fdf4; color: #059669; }
+  .tag-lunch  { background: #f0fdf4; color: #15803d; }
+  .stop-desc { font-size: 12px; color: #64748b; line-height: 1.6; }
+
+  /* 팁 박스 */
+  .tip-box { margin: 8px 16px 14px; background: #fffbeb; border-left: 3px solid #f59e0b; border-radius: 0 8px 8px 0; padding: 8px 12px; font-size: 12px; color: #92400e; line-height: 1.6; }
+  .tip-box strong { color: #d97706; }
+
+  /* 식사 요약 카드 */
+  .section-title { font-size: 13px; font-weight: 800; color: #475569; margin: 18px 0 8px; padding: 0 2px; letter-spacing: 0.3px; }
+  .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+  .info-card { background: white; border-radius: 12px; padding: 12px 14px; box-shadow: 0 1px 6px rgba(0,0,0,0.06); }
+  .info-card h4 { font-size: 12px; color: #64748b; margin-bottom: 6px; }
+  .info-card p { font-size: 12px; color: #1e293b; line-height: 1.6; font-weight: 500; }
+
+  /* 체크리스트 */
+  .checklist { background: white; border-radius: 12px; padding: 14px 16px; box-shadow: 0 1px 6px rgba(0,0,0,0.06); margin-bottom: 16px; }
+  .checklist h4 { font-size: 13px; font-weight: 700; color: #1e293b; margin-bottom: 10px; }
+  .check-item { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 6px; font-size: 12.5px; color: #374151; line-height: 1.5; }
+  .check-item::before { content: "□"; color: #94a3b8; flex-shrink: 0; font-size: 14px; line-height: 1.3; }
+
+  /* 지도 섹션 */
+  .map-wrap { border-radius: 16px; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,0.1); margin-bottom: 16px; position: relative; background: #1e3a5f; }
+  .map-wrap iframe { width: 100%; height: 520px; border: none; display: block; }
+  .map-label { background: linear-gradient(90deg,#1e3a5f,#2563eb); color: white; padding: 12px 16px; font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+  .map-label span { opacity: 0.75; font-size: 11px; font-weight: 400; }
+
+  /* 교통 타임라인 */
+  .transport-card { background: linear-gradient(135deg, #eef2ff, #e0e7ff); border-radius: 12px; padding: 14px 16px; margin-bottom: 12px; border: 1px solid #c7d2fe; }
+  .transport-card h4 { font-size: 12px; font-weight: 800; color: #4338ca; margin-bottom: 8px; }
+  .transport-row { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; font-size: 12px; color: #374151; }
+  .transport-row .t-time { font-weight: 700; color: #4338ca; min-width: 48px; }
+  .transport-row .t-arrow { color: #a5b4fc; }
+
+  .footer { text-align: center; padding: 16px; font-size: 11px; color: #94a3b8; }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <h1>🗾 삿포로 4박5일 가족여행</h1>
+  <p>홋카이도 벚꽃 · 오타루 운하 · 유리공예 · 쿠키 체험 · 온천</p>
+  <div class="badge-row">
+    <span class="badge">👨‍👩‍👧 3인 가족</span>
+    <span class="badge">🚃 대중교통</span>
+    <span class="badge">👧 수아 (7세)</span>
+    <span class="badge">✈️ 도착 15:00 · 출발 13:00</span>
+    <span class="badge">🌸 4월 24일 출발</span>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- 교통 타임라인 요약                       -->
+  <!-- ═══════════════════════════════════════ -->
+  <p class="section-title">✈️ 교통 타임라인 요약</p>
+  <div class="transport-card">
+    <h4>DAY 1 · 도착 (4/24)</h4>
+    <div class="transport-row"><span class="t-time">15:00</span><span class="t-arrow">→</span> 신치토세 공항 도착</div>
+    <div class="transport-row"><span class="t-time">15:00~</span><span class="t-arrow"></span> 공항 1F 스시도장 빠른 식사</div>
+    <div class="transport-row"><span class="t-time">15:37</span><span class="t-arrow">→</span> JR 쾌속 에어포트 탑승 (1,150엔/인)</div>
+    <div class="transport-row"><span class="t-time">16:14</span><span class="t-arrow">→</span> 삿포로역 도착 → 카락사 호텔 체크인</div>
+  </div>
+  <div class="transport-card">
+    <h4>DAY 2 · 오타루 (4/25)</h4>
+    <div class="transport-row"><span class="t-time">09:00</span><span class="t-arrow">→</span> 삿포로역 출발 JR 오타루행 (640엔/인)</div>
+    <div class="transport-row"><span class="t-time">09:34</span><span class="t-arrow">→</span> 오타루역 도착</div>
+    <div class="transport-row"><span class="t-time">15:30</span><span class="t-arrow">→</span> 오타루역 출발 JR 삿포로행</div>
+    <div class="transport-row"><span class="t-time">16:04</span><span class="t-arrow">→</span> 삿포로역 도착 → 맥주박물관 이동</div>
+  </div>
+  <div class="transport-card">
+    <h4>DAY 3 · 호텔 이동 (4/26)</h4>
+    <div class="transport-row"><span class="t-time">09:30</span><span class="t-arrow">→</span> 지하철 도자이선 미야노사와역 (시로이코이비토 파크)</div>
+    <div class="transport-row"><span class="t-time">13:30</span><span class="t-arrow">→</span> 삿포로 귀환 → 카락사 체크아웃 → 더낫 체크인</div>
+  </div>
+  <div class="transport-card">
+    <h4>DAY 5 · 출발 (4/28)</h4>
+    <div class="transport-row"><span class="t-time">10:20</span><span class="t-arrow">→</span> 삿포로역 출발 JR 쾌속 에어포트 (1,150엔/인)</div>
+    <div class="transport-row"><span class="t-time">10:57</span><span class="t-arrow">→</span> 신치토세 공항 도착 → 수속·면세점</div>
+    <div class="transport-row"><span class="t-time">12:00</span><span class="t-arrow">→</span> 공항 3F 라멘도조 점심</div>
+    <div class="transport-row"><span class="t-time">13:00</span><span class="t-arrow">→</span> 🛫 출발!</div>
+  </div>
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- DAY 1                                   -->
+  <!-- ═══════════════════════════════════════ -->
+  <p class="section-title">DAY 1 · 4월 24일 (목)</p>
+  <div class="day-card">
+    <div class="day-header d1">
+      <span class="day-label">Day 1</span>
+      <span class="day-title">공항 도착 15:00 → 홋카이도대학 벚꽃 → 스프카레 저녁 → 생맥주</span>
+    </div>
+    <div class="hotel-banner"><p>🏨 카락사 호텔 삿포로 <span>· 1박차 (4/24~4/25)</span></p></div>
+    <div class="timeline">
+
+      <!-- 교통 -->
+      <div class="tl-group-label lb-transport">✈️ 교통</div>
+      <div class="stop">
+        <div class="stop-left"><div class="dot trs"></div><div class="line"></div></div>
+        <div class="stop-right">
+          <div class="stop-time">15:00 · 신치토세 공항</div>
+          <div class="stop-name">✈️ 도착 → JR 쾌속 에어포트 탑승 <span class="tag tag-trs">15:37 출발</span></div>
+          <div class="stop-desc">15:00 도착 후 입국 수속. 공항 1F 스시도장에서 빠른 식사 후 15:37 JR 탑승. 삿포로역 16:14 도착 · 1,150엔/인. IC카드(Suica) 사용 가능.</div>
+        </div>
+      </div>
+
+      <!-- 점심 -->
+      <div class="tl-group-label lb-lunch">🍱 점심 (도착 후 첫 식사)</div>
+      <div class="stop">
+        <div class="stop-left"><div class="dot lunch"></div><div class="line"></div></div>
+        <div class="stop-right">
+          <div class="stop-time">15:00~15:30 · 신치토세 공항 1F</div>
+          <div class="stop-name">🍣 공항 스시도장 <span class="tag tag-lunch">홋카이도 첫 식사</span></div>
+          <div class="stop-desc">도착 후 바로! 홋카이도 신선 스시 · 연어·성게 덮밥. 공항 1F 식당가에 위치. 기내식 후라도 한 접시씩 맛보기. 15:37 기차 전 빠르게 마무리.</div>
+        </div>
+      </div>
+
+      <!-- 관광 -->
+      <div class="tl-group-label lb-spot">📍 관광</div>
+      <div class="stop">
+        <div class="stop-left"><div class="dot hotel"></div><div class="line"></div></div>
+        <div class="stop-right">
+          <div class="stop-time">16:30 · 삿포로역 근처</div>
+          <div class="stop-name">🏨 카락사 호텔 체크인 <span class="tag tag-hotel">베이스캠프</span></div>
+          <div class="stop-desc">삿포로역에서 도보 또는 택시 이동. 짐 풀고 바로 홋카이도대학으로 출발!</div>
+        </div>
+      </div>
+      <div class="stop">
+        <div class="stop-left"><div class="dot spot"></div><div class="line"></div></div>
+        <div class="stop-right">
+          <div class="stop-time">17:00~18:30 · 홋카이도대학</div>
+          <div class="stop-name">🌸 홋카이도대학 포플러 가로수길 <span class="tag tag-spot">벚꽃 명소</span></div>
+          <div class="stop-desc">삿포로역에서 도보 10분! 4월 말 벚꽃 절정 명소. 포플러 가로수길 + 클라크 박사 동상 인증샷. 수아와 꽃잎 날리는 사진 황금 타임. 입장 무료.</div>
+        </div>
+      </div>
+
+      <!-- 저녁 -->
+      <div class="tl-group-label lb-dinner">🍽️ 저녁</div>
+      <div class="stop">
+        <div class="stop-left"><div class="dot food"></div><div class="line"></div></div>
+        <div class="stop-right">
+          <div class="stop-time">19:00 · 타누키코지</div>
+          <div class="stop-name">🍛 스프카레 GARAKU <span class="tag tag-food">수아 스프카레</span></div>
+          <div class="stop-desc">삿포로 스프카레 1위 맛집! 수아는 매운맛 1~2단계, 어른 10단계. 치킨채소·양고기 중 선택. 17:00 오픈 전 웨이팅 등록(TableCheck 앱) 후 홋카이도대학 다녀오면 딱 맞아요.</div>
+        </div>
+      </div>
+
+      <!-- 야간 -->
+      <div class="tl-group-label lb-night">🌙 야간</div>
+      <div class="stop">
+        <div class="stop-left"><div class="dot night"></div></div>
+        <div class="stop-right">
+          <div class="stop-time">21:00 · 스스키노</div>
+          <div class="stop-name">🍺 삿포로 클래식 생맥주 첫 잔! <span class="tag tag-night">아빠 타임</span></div>
+          <div class="stop-desc">스스키노 이자카야에서 홋카이도 한정 삿포로 클래식 생맥주 첫 잔! 야키토리·회 한 접시 곁들이기. 수아 재운 후 or 함께 가볍게.</div>
+        </div>
+      </div>
+
+    </div>
+    <div class="tip-box">💡 <strong>Day 1 꿀팁</strong> · 공항 도착 후 GARAKU 웨이팅 앱 등록을 먼저 해두고 홋카이도대학 구경 후 저녁 타이밍을 맞추는 것이 베스트! IC카드는 공항 내 자동판매기에서 즉시 발급 가능.</div>
+  </div>
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- DAY 2                                   -->
+  <!-- ═══════════════════════════════════════ -->
+  <p class="section-title">DAY 2 · 4월 25일 (금)</p>
+  <div class="day-card">
+    <div class="day-header d2">
+      <span class="day-label">Day 2</span>
+      <span class="day-title">오타루 운하 → 유리공예 체험 → 해산물 덮밥 → 삿포로 맥주박물관</span>
+    </div>
+    <div class="hotel-banner"><p>🏨 카락사 호텔 삿포로 <span>· 2박차 (4/25~4/26)</span></p></div>
+    <div class="timeline">
+
+      <!-- 아침 편의점 ① -->
+      <div class="tl-group-label lb-breakfast">🏪 아침 ① 편의점</div>
+      <div class="stop">
+        <div class="stop-left"><div class="dot cvs"></div><div class="line"></div></div>
+        <div class="stop-right">
+          <div class="stop-time">07:30 · 호텔 근처</div>
+          <div class="stop-name">🏪 세이코마트 (セイコーマート) <span class="tag tag-cvs">홋카이도 한정 편의점</span></div>
+          <div class="stop-desc">홋카이도에만 있는 로컬 편의점! 일반 편의점보다 훨씬 맛있어요. 추천 메뉴: <strong>오니기리(おにぎり) + 미소시루 + 홋카이도 우유</strong>. 수아 용 크림빵도 챙겨요. 출발 전 빠르게.</div>
+        </div>
+      </div>
+
+      <!-- 교통 -->
+      <div class="tl-group-label lb-transport">🚃 교통</div>
+      <div class="stop">
+        <div class="stop-left"><div class="dot trs"></div><div class="line"></div></div>
+        <div class="stop-right">
+          <div class="stop-time">09:00 · 삿포로역</div>
+          <div class="stop-name">🚃 JR 삿포로 → 오타루 출발 <span class="tag tag-trs">34분 · 640엔</span></div>
+          <div class="stop-desc">JR 函館本線 오타루행. 09:00 출발 → 09:34 오타루역 도착. IC카드 이용 가능. 오타루역에서 운하까지 도보 10분.</div>
+        </div>
+      </div>
+
+      <!-- 관광 + 체험 -->
+      <div class="tl-group-label lb-spot">📍 관광 · 체험</div>
+      <div class="stop">
+        <div class="stop-left"><div class="dot spot"></div><div class="line"></div></div>
+        <div class="stop-right">
+          <div class="stop-time">09:45~10:30 · 오타루</div>
+          <div class="stop-name">🌊 오타루 운하 산책 <span class="tag tag-spot">아빠 필수</span></div>
+          <div class="stop-desc">오타루 여행 상징! 운하변 돌바닥 + 창고 건물 배경 가족사진 필수. 오전 빛이 사진 황금 타임. 수아와 운하변 걷기 30분.</div>
+        </div>
+      </div>
+      <div class="stop">
+        <div class="stop-left"><div class="dot exp"></div><div class="line"></div></div>
+        <div class="stop-right">
+          <div class="stop-time">10:30~12:00 · 오타루 시내</div>
+          <div class="stop-name">🔮 大正硝子館 유리공예 체험 <span class="tag tag-exp">엄마 체험 ❤️</span></div>
+          <div class="stop-desc">오타루 대표 유리공예관! 에칭(유리 조각)·그림 그리기 체험. 약 30~45분, 1,500~2,500엔/인. 수아도 참여 가능! ☎ 0134-31-2784 · 09:00~19:00. ⚠️ 사전 예약 필수.</div>
+        </div>
+      </div>
+
+      <!-- 점심 -->
+      <div class="tl-group-label lb-lunch">🍱 점심</div>
+      <div class="stop">
+        <div class="stop-left"><div class="dot lunch"></div><div class="line"></div></div>
+        <div class="stop-right">
+          <div class="stop-time">12:30 · 오타루역 앞</div>
+          <div class="stop-name">🦀 오타루 삼각시장 해산물 덮밥 <span class="tag tag-lunch">홋카이도 해산물</span></div>
+          <div class="stop-desc">오타루역 바로 옆 시장! 성게·연어알·게·이쿠라 덮밥. 시장에서 해산물 골라 즉석 조리. 아빠 해산물 욕구 충족! 수아는 연어 덮밥 추천.</div>
+        </div>
+      </div>
+
+      <!-- 오후 관광 -->
+      <div class="tl-group-label lb-spot">📍 오후 구경</div>
+      <div class="stop">
+        <div class="stop-left"><div class="dot cafe"></div><div class="line"></div></div>
+        <div class="stop-right">
+          <div class="stop-time">13:30~15:00 · 오타루 시내</div>
+          <div class="stop-name">☕ 오타루 레트로 카페 타임 <span class="tag tag-cafe">엄마 라떼 타임</span></div>
+          <div class="stop-desc">추천: <strong>르 포토푸(Le Pot-Feu)</strong> — 메이지 시대 창고 건물 레트로 감성. 라떼+파스타 런치 or 케이크 세트. 운하 근처 골목 레트로 카페 분위기 압도적.</div>
+        </div>
+      </div>
+
+      <!-- 교통 귀환 -->
+      <div class="tl-group-label lb-transport">🚃 귀환</div>
+      <div class="stop">
+        <div class="stop-left"><div class="dot trs"></div><div class="line"></div></div>
+        <div class="stop-right">
+          <div class="stop-time">15:30 · 오타루역</div>
+          <div class="stop-name">🚃 JR 오타루 → 삿포로 귀환 <span class="tag tag-trs">16:04 도착</span></div>
+          <div class="stop-desc">15:30 오타루 출발 → 16:04 삿포로역 도착. 맥주박물관으로 바로 이동. 지하철 도호선 나에보역 or 버스 이용.</div>
+        </div>
+      </div>
+
+      <!-- 관광 + 저녁 -->
+      <div class="tl-group-label lb-spot">📍 삿포로 맥주박물관</div>
+      <div class="stop">
+        <div class="stop-left"><div class="dot spot"></div><div class="line"></div></div>
+        <div class="stop-right">
+          <div class="stop-time">16:30 · 삿포로 동쪽</div>
+          <div class="stop-name">🍺 삿포로 맥주박물관 <span class="tag tag-spot">아빠 필수</span></div>
+          <div class="stop-desc">무료 자유견학 + 유료 시음(삿포로 클래식·흑맥주 비교 세트 1,000엔). ⚠️ 최종 입장 17:30. 박물관 견학 후 가든 레스토랑으로 이동.</div>
+        </div>
+      </div>
+
+      <!-- 저녁 -->
+      <div class="tl-group-label lb-dinner">🍽️ 저녁</div>
+      <div class="stop">
+        <div class="stop-left"><div class="dot food"></div></div>
+        <div class="stop-right">
+          <div class="stop-time">18:30 · 맥주박물관 내</div>
+          <div class="stop-name">🦀 삿포로 가든 레스토랑 <span class="tag tag-food">아빠 해산물+생맥주</span></div>
+          <div class="stop-desc">박물관 내 레스토랑! 징기스칸·게수프·해산물 구이 + 삿포로 클래식 생맥주. 야외 가든 분위기 최고. 수아 아이 메뉴 있음. ⚠️ 예약 권장.</div>
+        </div>
+      </div>
+
+    </div>
+    <div class="tip-box">💡 <strong>Day 2 꿀팁</strong> · 大正硝子館 체험 당일 매진 가능 — 오타루 도착 전 전화 예약 필수! 맥주박물관 가든은 도착 즉시 대기 등록. 세이코마트 아침은 꼭 경험하세요 — 일반 편의점과 차원이 달라요!</div>
+  </div>
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- DAY 3                                   -->
+  <!-- ═══════════════════════════════════════ -->
+  <p class="section-title">DAY 3 · 4월 26일 (토)</p>
+  <div class="day-card">
+    <div class="day-header d3">
+      <span class="day-label">Day 3</span>
+      <span class="day-title">시로이코이비토 쿠키 체험 → 호텔 이동 → 오도리 벚꽃 → 와규 특식</span>
+    </div>
+    <div class="hotel-banner"><p>🏨 숙소 이동: 카락사 체크아웃 → 더낫 호텔 체크인 <span>· 3박차 (4/26~4/27)</span></p></div>
+    <div class="timeline">
+
+      <!-- 아침 편의점 ② -->
+      <div class="tl-group-label lb-breakfast">🏪 아침 ② 편의점</div>
+      <div class="stop">
+        <div class="stop-left"><div class="dot cvs"></div><div class="line"></div></div>
+        <div class="stop-right">
+          <div class="stop-time">08:00 · 호텔 근처</div>
+          <div class="stop-name">🏪 세이코마트 (두 번째!) <span class="tag tag-cvs">편의점 아침</span></div>
+          <div class="stop-desc">체크아웃 전 편의점 아침 두 번째! 추천: <strong>핫 크로와상 샌드위치 + 커피 + 수아 미트볼 스파게티</strong>. 세이코마트 카운터 핫스낵도 수아가 좋아해요. 빠르게 먹고 체험 출발!</div>
+        </div>
+      </div>
+
+      <!-- 체험 -->
+      <div class="tl-group-label lb-activity">🎡 체험</div>
+      <div class="stop">
+        <div class="stop-left"><div class="dot exp"></div><div class="line"></div></div>
+        <div class="stop-right">
+          <div class="stop-time">10:00~12:00 · 미야노사와</div>
+          <div class="stop-name">🍪 白い恋人パーク 쿠키 만들기 체험 <span class="tag tag-exp">수아 최애 체험 ❤️</span></div>
+          <div class="stop-desc">홋카이도 대표 과자 테마파크! 직접 반죽 → 굽기 → 포장까지. 약 45분, 1,000~1,500엔/인. 수아가 만든 쿠키 가져가요! 공장 견학·레트로 건물 구경도 세트. 지하철 도자이선 미야노사와(宮の沢)역 도보 7분. ☎ 011-666-1481 · 09:00~18:00. ⚠️ 예약 필수!</div>
+        </div>
+      </div>
+
+      <!-- 점심 -->
+      <div class="tl-group-label lb-lunch">🍱 점심</div>
+      <div class="stop">
+        <div class="stop-left"><div class="dot lunch"></div><div class="line"></div></div>
+        <div class="stop-right">
+          <div class="stop-time">12:30 · 파크 내</div>
+          <div class="stop-name">🍽️ 시로이코이비토 파크 레스토랑 <span class="tag tag-lunch">파크 내 식사</span></div>
+          <div class="stop-desc">파크 내 카페 레스토랑에서 수아가 만든 쿠키와 함께 점심! 유럽풍 인테리어 엄마 사진 포인트. 파스타·수프 세트 추천. 수아 어린이 메뉴 있음.</div>
+        </div>
+      </div>
+
+      <!-- 호텔 이동 -->
+      <div class="tl-group-label lb-spot">🏨 호텔 이동</div>
+      <div class="stop">
+        <div class="stop-left"><div class="dot hotel"></div><div class="line"></div></div>
+        <div class="stop-right">
+          <div class="stop-time">14:00~14:30 · 삿포로</div>
+          <div class="stop-name">🏨 카락사 체크아웃 → 더낫 호텔 체크인 <span class="tag tag-hotel">호텔 이동</span></div>
+          <div class="stop-desc">카락사 짐 찾기 → 택시 or 지하철로 더낫 호텔(스스키노)로 이동. 체크인 후 오도리 공원 출발!</div>
+        </div>
+      </div>
+      <div class="stop">
+        <div class="stop-left"><div class="dot spot"></div><div class="line"></div></div>
+        <div class="stop-right">
+          <div class="stop-time">15:30~17:00 · 오도리</div>
+          <div class="stop-name">🌸 오도리 공원 벚꽃 & TV탑 <span class="tag tag-spot">엄마 사진 포인트</span></div>
+          <div class="stop-desc">삿포로 중심부 벚꽃! TV탑 배경 + 꽃 아래 수아 사진 = 삿포로 대표 포토스팟. 공원 산책 후 타누키코지 식품 기념품 구경.</div>
+        </div>
+      </div>
+
+      <!-- 저녁 특식 -->
+      <div class="tl-group-label lb-dinner">🥩 저녁 특식</div>
+      <div class="stop">
+        <div class="stop-left"><div class="dot food"></div></div>
+        <div class="stop-right">
+          <div class="stop-time">18:30 · 스스키노</div>
+          <div class="stop-name">🥩 焼肉 牛若丸 와규 야키니쿠 <span class="tag tag-food">2만엔 특식 ❤️</span></div>
+          <div class="stop-desc">수아 소고기 + 아빠 특식을 한 번에! 홋카이도산 와규 특선 코스. 어른 ~1만5천엔, 수아 아이 세트 별도. 부드러운 샤뷰샤뷰 추가도 가능. ⚠️ 예약 필수 ☎ 011-219-3777.</div>
+        </div>
+      </div>
+
+    </div>
+    <div class="tip-box">💡 <strong>Day 3 꿀팁</strong> · 카락사 짐은 체험 출발 전 프런트에 맡기고 귀환 후 찾으면 돼요. 시로이코이비토 파크 쿠키 체험은 회차별 정원 있어 당일 마감 가능 — 공식 홈페이지 사전 예약 필수!</div>
+  </div>
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- DAY 4                                   -->
+  <!-- ═══════════════════════════════════════ -->
+  <p class="section-title">DAY 4 · 4월 27일 (일)</p>
+  <div class="day-card">
+    <div class="day-header d4">
+      <span class="day-label">Day 4</span>
+      <span class="day-title">마루야마 벚꽃 + 신궁 → 샤뷰샤뷰 → 北のたまゆら 온천 → 회전초밥</span>
+    </div>
+    <div class="hotel-banner"><p>🏨 더낫 호텔 삿포로 <span>· 4박차 (4/27~4/28)</span></p></div>
+    <div class="timeline">
+
+      <!-- 아침 카페 -->
+      <div class="tl-group-label lb-breakfast">☕ 아침</div>
+      <div class="stop">
+        <div class="stop-left"><div class="dot cafe"></div><div class="line"></div></div>
+        <div class="stop-right">
+          <div class="stop-time">08:30 · 마루야마 근처</div>
+          <div class="stop-name">☕ 마루야마 동네 베이커리 카페 <span class="tag tag-cafe">엄마 라떼 아침</span></div>
+          <div class="stop-desc">마루야마 공원 근처 로컬 베이커리. 신선한 빵+라떼+수아 크림빵으로 여유로운 아침. 추천: <strong>Boulangerie Cafe Chou Chou</strong> or 마루야마 동네 카페. 09:30 공원 입장 전 여유롭게.</div>
+        </div>
+      </div>
+
+      <!-- 관광 -->
+      <div class="tl-group-label lb-spot">🌸 관광</div>
+      <div class="stop">
+        <div class="stop-left"><div class="dot spot"></div><div class="line"></div></div>
+        <div class="stop-right">
+          <div class="stop-time">10:00~12:00 · 마루야마</div>
+          <div class="stop-name">🌸 마루야마 공원 + 홋카이도 신궁 <span class="tag tag-spot">엄마 사진 포인트</span></div>
+          <div class="stop-desc">삿포로 최고 벚꽃 명소! 원숭이산 주변 벚꽃 터널 + 홋카이도 신궁 도리이 앞 수아 사진. 지하철 도자이선 마루야마공원역 하차. 입장 무료. 벚꽃 시즌 주말은 인파 많으니 오전 일찍!</div>
+        </div>
+      </div>
+
+      <!-- 점심 -->
+      <div class="tl-group-label lb-lunch">🥩 점심</div>
+      <div class="stop">
+        <div class="stop-left"><div class="dot lunch"></div><div class="line"></div></div>
+        <div class="stop-right">
+          <div class="stop-time">12:30 · 마루야마 근처</div>
+          <div class="stop-name">🥩 しゃぶしゃぶ温野菜 마루야마 <span class="tag tag-lunch">수아 소고기 점심</span></div>
+          <div class="stop-desc">홋카이도 와규 샤뷰샤뷰! 부드럽고 얇게 썬 고기라 수아도 맛있게. 어린이 세트 따로 있음. 공원 산책 후 배고플 타이밍에 딱. 예약 권장.</div>
+        </div>
+      </div>
+
+      <!-- 온천 -->
+      <div class="tl-group-label lb-activity">♨️ 온천</div>
+      <div class="stop">
+        <div class="stop-left"><div class="dot onsen"></div><div class="line"></div></div>
+        <div class="stop-right">
+          <div class="stop-time">14:30~16:30 · 시내</div>
+          <div class="stop-name">♨️ 北のたまゆら 荒井山 온천 <span class="tag tag-onsen">엄마 온천 타임</span></div>
+          <div class="stop-desc">삿포로 시내에서 시전(노면전차) 약 20분! 이동 부담 없는 천연 온천. 내탕·노천탕 완비. 성인 ~800엔 · 어린이 ~400엔. 마루야마에서 시전으로 바로 연결. ☎ 011-562-2600 · 10:00~23:00.</div>
+        </div>
+      </div>
+
+      <!-- 쇼핑 -->
+      <div class="tl-group-label lb-spot">🛍️ 기념품</div>
+      <div class="stop">
+        <div class="stop-left"><div class="dot spot"></div><div class="line"></div></div>
+        <div class="stop-right">
+          <div class="stop-time">17:00~18:30 · 타누키코지</div>
+          <div class="stop-name">🛍️ 타누키코지 식품 기념품 <span class="tag tag-spot">귀가 준비</span></div>
+          <div class="stop-desc">온천 후 타누키코지 상점가! 로이즈 초콜릿·시로이코이비토·六花亭·홋카이도 과자 총집합. 내일 아침도 살 수 있으니 오늘은 가볍게 둘러보기.</div>
+        </div>
+      </div>
+
+      <!-- 저녁 -->
+      <div class="tl-group-label lb-dinner">🍽️ 저녁</div>
+      <div class="stop">
+        <div class="stop-left"><div class="dot food"></div><div class="line"></div></div>
+        <div class="stop-right">
+          <div class="stop-time">19:00 · JR 타워</div>
+          <div class="stop-name">🍣 根室花まる 회전초밥 <span class="tag tag-food">아빠 해산물 마무리</span></div>
+          <div class="stop-desc">삿포로 최고 회전초밥! JR타워 스텔라플레이스 6F. 성게·연어알·게·이쿠라 등 홋카이도 해산물 총집합. 웨이팅 있으니 19:00 전 도착 추천.</div>
+        </div>
+      </div>
+
+      <!-- 야간 -->
+      <div class="tl-group-label lb-night">🌙 야간</div>
+      <div class="stop">
+        <div class="stop-left"><div class="dot night"></div></div>
+        <div class="stop-right">
+          <div class="stop-time">21:00 · 스스키노</div>
+          <div class="stop-name">🍺 마지막 밤 삿포로 클래식 <span class="tag tag-night">아빠 타임</span></div>
+          <div class="stop-desc">4박5일 마지막 삿포로 클래식 생맥주 건배! 숙소 근처 이자카야에서 홋카이도 여행 마무리.</div>
+        </div>
+      </div>
+
+    </div>
+    <div class="tip-box">💡 <strong>Day 4 꿀팁</strong> · 마루야마 공원 벚꽃 시즌 주말은 돗자리 피크닉 인파가 많아요 — 오전 일찍 도착 추천. 北のたまゆら는 시전(市電) 탑승 후 荒井山停留場 하차, 도보 3분. 타월 현지 대여 가능.</div>
+  </div>
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- DAY 5                                   -->
+  <!-- ═══════════════════════════════════════ -->
+  <p class="section-title">DAY 5 · 4월 28일 (월) · 출발 13:00</p>
+  <div class="day-card">
+    <div class="day-header d5">
+      <span class="day-label">Day 5</span>
+      <span class="day-title">삿포로역 파세오 아침 → 기념품 → 10:20 JR 탑승 → 공항 라멘 → 13:00 출발</span>
+    </div>
+    <div class="timeline">
+
+      <!-- 아침 -->
+      <div class="tl-group-label lb-breakfast">☕ 아침</div>
+      <div class="stop">
+        <div class="stop-left"><div class="dot cafe"></div><div class="line"></div></div>
+        <div class="stop-right">
+          <div class="stop-time">09:00 · 삿포로역 지하</div>
+          <div class="stop-name">🥐 삿포로역 파세오(PASEO) 베이커리 <span class="tag tag-cafe">빠른 아침</span></div>
+          <div class="stop-desc">삿포로역 지하 파세오 내 베이커리. 크루아상+라떼+수아 크림빵으로 빠른 아침. 아침 식사 후 기념품 쇼핑 시작!</div>
+        </div>
+      </div>
+
+      <!-- 쇼핑 -->
+      <div class="tl-group-label lb-spot">🛍️ 마지막 기념품</div>
+      <div class="stop">
+        <div class="stop-left"><div class="dot spot"></div><div class="line"></div></div>
+        <div class="stop-right">
+          <div class="stop-time">09:00~10:00 · 삿포로역 지하</div>
+          <div class="stop-name">🛍️ JR타워 스텔라플레이스 식품관 <span class="tag tag-spot">마지막 쇼핑</span></div>
+          <div class="stop-desc">삿포로역 지하·JR타워 내 홋카이도 과자 전문점 총집합. 로이즈·시로이코이비토·六花亭·마루세이 버터샌드 등. 짐 무게 유의하며 구입!</div>
+        </div>
+      </div>
+
+      <!-- 교통 -->
+      <div class="tl-group-label lb-transport">✈️ 교통 · 공항 이동</div>
+      <div class="stop">
+        <div class="stop-left"><div class="dot trs"></div><div class="line"></div></div>
+        <div class="stop-right">
+          <div class="stop-time">10:20 · 삿포로역 ⚠️ 필수</div>
+          <div class="stop-name">🚃 JR 쾌속 에어포트 출발 <span class="tag tag-trs">10:20 탑승 필수!</span></div>
+          <div class="stop-desc">10:20 삿포로역 출발 → 10:57 신치토세 공항 도착. 1,150엔/인. ⚠️ 13:00 출발에 맞춰 이 기차를 놓치면 안 돼요! 10:10에 플랫폼 대기 권장.</div>
+        </div>
+      </div>
+
+      <!-- 점심 -->
+      <div class="tl-group-label lb-lunch">🍜 점심 (공항)</div>
+      <div class="stop">
+        <div class="stop-left"><div class="dot lunch"></div><div class="line"></div></div>
+        <div class="stop-right">
+          <div class="stop-time">11:30 · 신치토세 공항 3F</div>
+          <div class="stop-name">🍜 공항 라멘도조 마지막 식사 <span class="tag tag-lunch">홋카이도 미소라멘</span></div>
+          <div class="stop-desc">공항 3층 라멘도조(ラーメン道場)에서 홋카이도 미소라멘으로 여행 마무리! 수아 버터콘 미소라멘 추천. 11:30~12:30 여유롭게 즐기고 탑승구 이동.</div>
+        </div>
+      </div>
+
+      <!-- 출발 -->
+      <div class="tl-group-label lb-transport">✈️ 출발</div>
+      <div class="stop">
+        <div class="stop-left"><div class="dot trs"></div></div>
+        <div class="stop-right">
+          <div class="stop-time">13:00 · 신치토세 공항</div>
+          <div class="stop-name">✈️ 홋카이도 안녕! 출발 <span class="tag tag-trs">13:00</span></div>
+          <div class="stop-desc">4박5일 삿포로 최고의 추억 완성! 공항 면세점 도라에몽 뮤지엄은 12:00 전에 짧게 들러도 수아가 좋아해요.</div>
+        </div>
+      </div>
+
+    </div>
+    <div class="tip-box">💡 <strong>Day 5 꿀팁</strong> · 10:20 기차를 꼭 지켜야 해요! 더낫 호텔 체크아웃은 10:00에 마치고 짐 맡긴 뒤 쇼핑 → 10:10 플랫폼 이동. 공항 면세점 마지막 쇼핑은 시간 여유 없으니 어제 타누키코지에서 대부분 구입 완료해두세요.</div>
+  </div>
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- 지도                                    -->
+  <!-- ═══════════════════════════════════════ -->
+  <p class="section-title">🗺️ 일정 지도</p>
+  <div class="map-wrap">
+    <div class="map-label">🗺️ 전체 일정 지도 <span>· DAY별 탭으로 동선 확인 가능</span></div>
+    <iframe src="./map/map.html" title="삿포로 여행 지도" allowfullscreen></iframe>
+  </div>
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- 식사 요약                               -->
+  <!-- ═══════════════════════════════════════ -->
+  <p class="section-title">🍽️ 5일 식사 한눈에 보기</p>
+  <div style="background:white;border-radius:12px;padding:14px 16px;box-shadow:0 1px 6px rgba(0,0,0,0.06);margin-bottom:16px;">
+    <table style="width:100%;font-size:11.5px;border-collapse:collapse;">
+      <thead>
+        <tr style="border-bottom:2px solid #e2e8f0;">
+          <th style="padding:6px 4px;text-align:left;color:#475569;width:40px;"></th>
+          <th style="padding:6px 4px;text-align:center;color:#f59e0b;font-weight:800;">🌅 아침</th>
+          <th style="padding:6px 4px;text-align:center;color:#22c55e;font-weight:800;">☀️ 점심</th>
+          <th style="padding:6px 4px;text-align:center;color:#ec4899;font-weight:800;">🌙 저녁</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="border-bottom:1px solid #f1f5f9;">
+          <td style="padding:7px 4px;font-weight:800;color:#f97316;">D1</td>
+          <td style="padding:7px 4px;text-align:center;color:#64748b;font-size:11px;">비행 중</td>
+          <td style="padding:7px 4px;text-align:center;color:#1e293b;font-weight:600;">공항 스시도장</td>
+          <td style="padding:7px 4px;text-align:center;color:#1e293b;font-weight:600;">GARAKU 스프카레</td>
+        </tr>
+        <tr style="border-bottom:1px solid #f1f5f9;background:#fffbeb;">
+          <td style="padding:7px 4px;font-weight:800;color:#8b5cf6;">D2</td>
+          <td style="padding:7px 4px;text-align:center;color:#1e293b;font-weight:700;">🏪 세이코마트①</td>
+          <td style="padding:7px 4px;text-align:center;color:#1e293b;font-weight:600;">오타루 삼각시장 해산물 덮밥</td>
+          <td style="padding:7px 4px;text-align:center;color:#1e293b;font-weight:600;">삿포로 가든 (맥주+해산물)</td>
+        </tr>
+        <tr style="border-bottom:1px solid #f1f5f9;">
+          <td style="padding:7px 4px;font-weight:800;color:#0ea5e9;">D3</td>
+          <td style="padding:7px 4px;text-align:center;color:#1e293b;font-weight:700;">🏪 세이코마트②</td>
+          <td style="padding:7px 4px;text-align:center;color:#1e293b;font-weight:600;">시로이코이비토 파크 카페</td>
+          <td style="padding:7px 4px;text-align:center;color:#1e293b;font-weight:600;">🥩 와규 야키니쿠 (특식)</td>
+        </tr>
+        <tr style="border-bottom:1px solid #f1f5f9;background:#f0fdf4;">
+          <td style="padding:7px 4px;font-weight:800;color:#10b981;">D4</td>
+          <td style="padding:7px 4px;text-align:center;color:#1e293b;font-weight:600;">마루야마 베이커리 카페</td>
+          <td style="padding:7px 4px;text-align:center;color:#1e293b;font-weight:600;">🥩 샤뷰샤뷰 温野菜 (수아 소고기)</td>
+          <td style="padding:7px 4px;text-align:center;color:#1e293b;font-weight:600;">根室花まる 회전초밥</td>
+        </tr>
+        <tr>
+          <td style="padding:7px 4px;font-weight:800;color:#f43f5e;">D5</td>
+          <td style="padding:7px 4px;text-align:center;color:#1e293b;font-weight:600;">파세오 베이커리</td>
+          <td style="padding:7px 4px;text-align:center;color:#1e293b;font-weight:600;">공항 라멘도조 (미소라멘)</td>
+          <td style="padding:7px 4px;text-align:center;color:#64748b;font-size:11px;">기내</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- 수아 + 엄마 + 아빠 요약                 -->
+  <!-- ═══════════════════════════════════════ -->
+  <p class="section-title">👧 수아 먹거리 & 체험</p>
+  <div class="info-grid">
+    <div class="info-card"><h4>🍛 스프카레 (D1)</h4><p><strong>GARAKU</strong><br>매운맛 1~2단계<br>아이 친화적</p></div>
+    <div class="info-card"><h4>🍣 해산물 덮밥 (D2)</h4><p><strong>오타루 삼각시장</strong><br>연어 덮밥 추천<br>신선도 최고</p></div>
+    <div class="info-card"><h4>🍪 쿠키 체험 (D3)</h4><p><strong>白い恋人パーク</strong><br>직접 굽고 포장<br>☎ 011-666-1481</p></div>
+    <div class="info-card"><h4>🥩 소고기 (D3+D4)</h4><p><strong>와규 야키니쿠</strong><br>샤뷰샤뷰 温野菜<br>부드러운 홋카이도 와규</p></div>
+  </div>
+
+  <p class="section-title">☕ 엄마 카페 & 체험 & 사진 포인트</p>
+  <div class="info-grid">
+    <div class="info-card"><h4>Day 1 · 삿포로</h4><p><strong>홋카이도대학</strong><br>포플러 가로수 벚꽃<br>수아랑 사진 최고</p></div>
+    <div class="info-card"><h4>Day 2 · 오타루</h4><p><strong>大正硝子館</strong><br>유리공예 체험<br>☎ 0134-31-2784</p></div>
+    <div class="info-card"><h4>Day 3 · 삿포로</h4><p><strong>오도리 공원+TV탑</strong><br>벚꽃+삿포로 뷰<br>인증샷 명소</p></div>
+    <div class="info-card"><h4>Day 4 · 마루야마</h4><p><strong>마루야마 공원+신궁</strong><br>벚꽃 터널+도리이<br>♨️ 荒井山 온천</p></div>
+  </div>
+
+  <p class="section-title">🍺 아빠 필수 코스</p>
+  <div class="info-grid">
+    <div class="info-card"><h4>Day 1 · 삿포로</h4><p><strong>스스키노 이자카야</strong><br>삿포로 클래식 첫 잔<br>홋카이도 한정!</p></div>
+    <div class="info-card"><h4>Day 2 · 오타루</h4><p><strong>오타루 운하</strong><br>삼각시장 해산물<br>맥주박물관 시음</p></div>
+    <div class="info-card"><h4>Day 3 · 특식</h4><p><strong>와규 야키니쿠</strong><br>牛若丸 스스키노<br>~2만엔/인</p></div>
+    <div class="info-card"><h4>Day 4 · 해산물</h4><p><strong>根室花まる</strong><br>성게·연어알 초밥<br>JR타워 6F</p></div>
+  </div>
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- 체크리스트                              -->
+  <!-- ═══════════════════════════════════════ -->
+  <p class="section-title">📦 출발 전 예약 & 체크리스트</p>
+  <div class="checklist">
+    <h4>🗓️ 사전 예약 필수 (출발 전 완료!)</h4>
+    <div class="check-item">大正硝子館 유리공예 체험 ☎ 0134-31-2784 (오타루)</div>
+    <div class="check-item">白い恋人パーク 쿠키 체험 ☎ 011-666-1481 (미야노사와)</div>
+    <div class="check-item">焼肉 牛若丸 와규 특식 예약 ☎ 011-219-3777</div>
+    <div class="check-item">GARAKU 스프카레 TableCheck 앱 사전 웨이팅 등록</div>
+    <div class="check-item">삿포로 가든 레스토랑 (맥주박물관) 예약</div>
+  </div>
+  <div class="checklist">
+    <h4>🧳 짐 & 준비물</h4>
+    <div class="check-item">IC카드 Suica · PASMO (없으면 공항에서 발급)</div>
+    <div class="check-item">온천 타월 (현지 대여 가능하나 개인 타월 있으면 편리)</div>
+    <div class="check-item">수아 겉옷 여분 (4월 삿포로 아침저녁 10도 이하)</div>
+    <div class="check-item">엔화 환전 (체험비·소액 결제 현금 필요)</div>
+    <div class="check-item">포켓와이파이 or 현지 심카드</div>
+    <div class="check-item">수아 멀미약 (공항 JR · 시전 대비)</div>
+  </div>
+
+</div>
+
+<div class="footer">수아와 함께 최고의 홋카이도 봄 여행 되세요! 🌸🍺🐄<br>by Claude · 4박5일 삿포로 맞춤 일정</div>
+
+</body>
+</html>
