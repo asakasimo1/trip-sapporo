@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🗾 삿포로 가족여행 지도</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif; background: #f0f4f8; }
+
+  /* 헤더 */
+  .header {
+    background: linear-gradient(135deg, #1a73c8, #0ea5e9);
+    color: white;
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    z-index: 100;
+    position: relative;
+  }
+  .header h1 { font-size: 16px; font-weight: 800; }
+  .header p  { font-size: 12px; opacity: 0.85; }
+
+  /* 레이아웃 */
+  .layout { display: flex; height: calc(100vh - 56px); }
+
+  /* 사이드바 */
+  .sidebar {
+    width: 300px;
+    min-width: 300px;
+    background: white;
+    overflow-y: auto;
+    box-shadow: 2px 0 8px rgba(0,0,0,0.07);
+    z-index: 10;
+  }
+
+  /* Day 탭 */
+  .day-tabs {
+    display: flex;
+    overflow-x: auto;
+    border-bottom: 1px solid #e2e8f0;
+    padding: 0 8px;
+    gap: 4px;
+    background: #f8fafc;
+  }
+  .day-tab {
+    padding: 10px 12px;
+    font-size: 12px;
+    font-weight: 700;
+    border: none;
+    background: none;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    white-space: nowrap;
+    color: #64748b;
+    transition: all 0.2s;
+  }
+  .day-tab.active { color: #1e293b; border-bottom-color: var(--day-color); }
+  .day-tab:hover  { color: #1e293b; }
+
+  /* 장소 리스트 */
+  .place-list { padding: 8px 0; }
+  .place-item {
+    padding: 12px 16px;
+    border-bottom: 1px solid #f1f5f9;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .place-item:hover { background: #f8fafc; }
+  .place-item.active { background: #eff6ff; }
+  .place-top { display: flex; align-items: center; gap: 6px; margin-bottom: 3px; }
+  .place-icon { font-size: 14px; }
+  .place-name { font-size: 13px; font-weight: 700; color: #1e293b; }
+  .place-namejp { font-size: 11px; color: #94a3b8; }
+  .place-desc { font-size: 12px; color: #64748b; line-height: 1.5; margin-top: 2px; }
+  .place-tip {
+    font-size: 11px; color: #92400e;
+    background: #fffbeb;
+    border-left: 3px solid #f59e0b;
+    padding: 4px 8px;
+    margin-top: 5px;
+    border-radius: 0 4px 4px 0;
+  }
+  .order-badge {
+    background: var(--day-color, #94a3b8);
+    color: white;
+    font-size: 10px;
+    font-weight: 800;
+    border-radius: 50%;
+    width: 20px; height: 20px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .unassigned-label {
+    font-size: 11px; color: #94a3b8;
+    padding: 8px 16px 4px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  /* 지도 */
+  #map { flex: 1; }
+
+  /* 범례 */
+  .legend {
+    position: absolute;
+    bottom: 30px;
+    right: 10px;
+    background: white;
+    border-radius: 10px;
+    padding: 10px 14px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.12);
+    font-size: 12px;
+    z-index: 5;
+  }
+  .legend-title { font-weight: 700; margin-bottom: 6px; color: #1e293b; }
+  .legend-item { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; color: #374151; }
+  .legend-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+
+  /* API 키 경고 */
+  .api-warning {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    border-radius: 16px;
+    padding: 24px 28px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.15);
+    text-align: center;
+    max-width: 360px;
+    z-index: 20;
+  }
+  .api-warning h3 { font-size: 16px; color: #1e293b; margin-bottom: 8px; }
+  .api-warning p  { font-size: 13px; color: #64748b; line-height: 1.6; }
+  .api-warning code {
+    display: block;
+    background: #f1f5f9;
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 12px;
+    color: #e11d48;
+    margin: 10px 0;
+    word-break: break-all;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <h1>🗾 삿포로 가족여행 지도</h1>
+    <p>2026년 4월 24일 출발 · 4박5일 · 👨‍👩‍👧 3인 가족</p>
+  </div>
+</div>
+
+<div class="layout">
+
+  <!-- 사이드바 -->
+  <div class="sidebar">
+    <div class="day-tabs" id="dayTabs"></div>
+    <div class="place-list" id="placeList"></div>
+  </div>
+
+  <!-- 지도 -->
+  <div style="flex:1; position:relative;">
+    <div id="map"></div>
+
+    <!-- API 키 미설정 시 안내 -->
+    <div class="api-warning" id="apiWarning" style="display:none;">
+      <h3>🔑 Google Maps API 키 필요</h3>
+      <p>이 파일 하단 스크립트 태그의 <strong>YOUR_API_KEY</strong>를 발급받은 키로 교체하세요.</p>
+      <code>https://console.cloud.google.com/apis/credentials</code>
+      <p>Maps JavaScript API를 활성화한 후 키를 붙여넣으면 지도가 표시됩니다.</p>
+    </div>
+
+    <!-- 범례 -->
+    <div class="legend" id="legend"></div>
+  </div>
+
+</div>
+
+<script src="locations.js"></script>
+<script>
+// ──────────────────────────────────────────────
+// 상태
+// ──────────────────────────────────────────────
+let map, markers = {}, activeDay = "all", infoWindow;
+const ALL_DAYS = [0, 1, 2, 3, 4, 5];
+
+// ──────────────────────────────────────────────
+// Google Maps 초기화
+// ──────────────────────────────────────────────
+function initMap() {
+  document.getElementById("apiWarning").style.display = "none";
+
+  map = new google.maps.Map(document.getElementById("map"), {
+    center: { lat: 43.0686, lng: 141.3506 }, // 삿포로역
+    zoom: 11,
+    mapTypeControl: false,
+    streetViewControl: false,
+    fullscreenControl: true,
+    styles: [
+      { featureType: "poi", elementType: "labels", stylers: [{ visibility: "off" }] },
+    ],
+  });
+
+  infoWindow = new google.maps.InfoWindow();
+  renderSidebar();
+  renderMarkers();
+  renderLegend();
+}
+
+// ──────────────────────────────────────────────
+// 마커 렌더링
+// ──────────────────────────────────────────────
+function renderMarkers() {
+  // 기존 마커 제거
+  Object.values(markers).forEach(m => m.setMap(null));
+  markers = {};
+
+  const filtered = activeDay === "all"
+    ? LOCATIONS
+    : activeDay === "unassigned"
+    ? LOCATIONS.filter(l => l.day === 0)
+    : LOCATIONS.filter(l => l.day === activeDay);
+
+  filtered.forEach(loc => {
+    const dayInfo = loc.day > 0 ? DAY_COLORS[loc.day] : { color: "#94a3b8", label: "미배정" };
+    const cat = CATEGORY[loc.category];
+
+    const marker = new google.maps.Marker({
+      position: { lat: loc.lat, lng: loc.lng },
+      map,
+      title: loc.name,
+      label: loc.order > 0
+        ? { text: String(loc.order), color: "white", fontWeight: "bold", fontSize: "11px" }
+        : { text: cat.icon, color: "white", fontSize: "12px" },
+      icon: {
+        path: google.maps.SymbolPath.CIRCLE,
+        scale: 16,
+        fillColor: dayInfo.color,
+        fillOpacity: 1,
+        strokeColor: "white",
+        strokeWeight: 2,
+      },
+    });
+
+    marker.addListener("click", () => {
+      const content = `
+        <div style="max-width:220px;font-family:'Apple SD Gothic Neo',sans-serif">
+          <div style="font-size:15px;font-weight:800;color:#1e293b;margin-bottom:2px">
+            ${cat.icon} ${loc.name}
+          </div>
+          <div style="font-size:11px;color:#94a3b8;margin-bottom:6px">${loc.nameJp}</div>
+          <div style="font-size:12px;color:#374151;line-height:1.6">${loc.desc}</div>
+          ${loc.tip ? `<div style="font-size:11px;color:#92400e;background:#fffbeb;padding:5px 8px;border-radius:4px;margin-top:6px;border-left:3px solid #f59e0b">💡 ${loc.tip}</div>` : ""}
+          <div style="margin-top:6px;font-size:11px;color:white;background:${dayInfo.color};display:inline-block;padding:2px 8px;border-radius:10px;font-weight:700">${dayInfo.label}</div>
+        </div>`;
+      infoWindow.setContent(content);
+      infoWindow.open(map, marker);
+      highlightSidebarItem(loc.id);
+    });
+
+    markers[loc.id] = marker;
+  });
+
+  // 동선 폴리라인 (day별 order 순)
+  drawRoutes(filtered);
+}
+
+// ──────────────────────────────────────────────
+// 동선 폴리라인
+// ──────────────────────────────────────────────
+function drawRoutes(filtered) {
+  [1,2,3,4,5].forEach(d => {
+    const dayLocs = filtered
+      .filter(l => l.day === d && l.order > 0)
+      .sort((a, b) => a.order - b.order);
+
+    if (dayLocs.length < 2) return;
+
+    new google.maps.Polyline({
+      path: dayLocs.map(l => ({ lat: l.lat, lng: l.lng })),
+      geodesic: true,
+      strokeColor: DAY_COLORS[d].color,
+      strokeOpacity: 0.7,
+      strokeWeight: 3,
+      map,
+    });
+  });
+}
+
+// ──────────────────────────────────────────────
+// 사이드바
+// ──────────────────────────────────────────────
+function renderSidebar() {
+  renderTabs();
+  renderPlaceList();
+}
+
+function renderTabs() {
+  const tabsEl = document.getElementById("dayTabs");
+  const tabs = [
+    { key: "all", label: "전체" },
+    { key: 1, label: "DAY 1", color: DAY_COLORS[1].color },
+    { key: 2, label: "DAY 2", color: DAY_COLORS[2].color },
+    { key: 3, label: "DAY 3", color: DAY_COLORS[3].color },
+    { key: 4, label: "DAY 4", color: DAY_COLORS[4].color },
+    { key: 5, label: "DAY 5", color: DAY_COLORS[5].color },
+    { key: "unassigned", label: "미배정" },
+  ];
+
+  tabsEl.innerHTML = tabs.map(t => `
+    <button
+      class="day-tab ${activeDay === t.key ? "active" : ""}"
+      style="--day-color:${t.color || "#94a3b8"}"
+      onclick="selectDay(${JSON.stringify(t.key)})"
+    >${t.label}</button>
+  `).join("");
+}
+
+function renderPlaceList() {
+  const listEl = document.getElementById("placeList");
+  const filtered = activeDay === "all"
+    ? LOCATIONS
+    : activeDay === "unassigned"
+    ? LOCATIONS.filter(l => l.day === 0)
+    : LOCATIONS.filter(l => l.day === activeDay);
+
+  // 배정된 것과 미배정 분리
+  const assigned   = filtered.filter(l => l.day > 0).sort((a,b) => a.day - b.day || a.order - b.order);
+  const unassigned = filtered.filter(l => l.day === 0);
+
+  let html = "";
+  assigned.forEach(loc => { html += placeItemHTML(loc); });
+  if (unassigned.length > 0 && activeDay === "all") {
+    html += `<div class="unassigned-label">미배정 후보지</div>`;
+    unassigned.forEach(loc => { html += placeItemHTML(loc); });
+  } else if (activeDay === "unassigned") {
+    unassigned.forEach(loc => { html += placeItemHTML(loc); });
+  }
+
+  listEl.innerHTML = html;
+}
+
+function placeItemHTML(loc) {
+  const dayInfo = loc.day > 0 ? DAY_COLORS[loc.day] : { color: "#94a3b8" };
+  const cat = CATEGORY[loc.category];
+  return `
+    <div class="place-item" id="item-${loc.id}" onclick="focusLocation('${loc.id}')">
+      <div class="place-top">
+        ${loc.order > 0
+          ? `<div class="order-badge" style="--day-color:${dayInfo.color}">${loc.order}</div>`
+          : `<span class="place-icon">${cat.icon}</span>`}
+        <span class="place-name">${loc.name}</span>
+      </div>
+      <div class="place-namejp">${loc.nameJp}</div>
+      <div class="place-desc">${loc.desc}</div>
+      ${loc.tip ? `<div class="place-tip">💡 ${loc.tip}</div>` : ""}
+    </div>`;
+}
+
+// ──────────────────────────────────────────────
+// 범례
+// ──────────────────────────────────────────────
+function renderLegend() {
+  const el = document.getElementById("legend");
+  const items = [
+    ...Object.entries(DAY_COLORS).map(([d, v]) => `
+      <div class="legend-item">
+        <div class="legend-dot" style="background:${v.color}"></div>${v.label}
+      </div>`),
+    `<div class="legend-item"><div class="legend-dot" style="background:#94a3b8"></div>미배정</div>`,
+  ];
+  el.innerHTML = `<div class="legend-title">일정</div>${items.join("")}`;
+}
+
+// ──────────────────────────────────────────────
+// 인터랙션
+// ──────────────────────────────────────────────
+function selectDay(day) {
+  activeDay = day;
+  renderTabs();
+  renderPlaceList();
+  renderMarkers();
+}
+
+function focusLocation(id) {
+  const loc = LOCATIONS.find(l => l.id === id);
+  if (!loc || !markers[id]) return;
+  map.panTo({ lat: loc.lat, lng: loc.lng });
+  map.setZoom(14);
+  google.maps.event.trigger(markers[id], "click");
+  highlightSidebarItem(id);
+}
+
+function highlightSidebarItem(id) {
+  document.querySelectorAll(".place-item").forEach(el => el.classList.remove("active"));
+  const el = document.getElementById("item-" + id);
+  if (el) { el.classList.add("active"); el.scrollIntoView({ block: "nearest" }); }
+}
+
+// API 키 오류 처리
+window.gm_authFailure = function() {
+  document.getElementById("apiWarning").style.display = "block";
+  document.getElementById("map").style.opacity = "0.2";
+};
+</script>
+
+<!--
+  ========================================================
+  ★ Google Maps API 키 설정 방법
+  ========================================================
+  1. https://console.cloud.google.com/apis/credentials 접속
+  2. '사용자 인증 정보 만들기' → 'API 키' 클릭
+  3. Maps JavaScript API 활성화
+  4. 아래 YOUR_API_KEY 를 발급받은 키로 교체
+  ========================================================
+-->
+<script
+  src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap&language=ko&region=JP"
+  async defer
+  onerror="document.getElementById('apiWarning').style.display='block'">
+</script>
+
+</body>
+</html>
