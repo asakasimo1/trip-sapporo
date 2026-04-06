@@ -17,14 +17,31 @@
     align-items: center;
     gap: 12px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-    z-index: 100;
+    z-index: 200;
     position: relative;
   }
   .header h1 { font-size: 16px; font-weight: 800; }
   .header p  { font-size: 12px; opacity: 0.85; }
 
+  /* 사이드바 토글 버튼 */
+  .sidebar-toggle {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255,255,255,0.2);
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-size: 20px;
+    width: 36px;
+    height: 36px;
+    cursor: pointer;
+    flex-shrink: 0;
+    margin-left: auto;
+  }
+
   /* 레이아웃 */
-  .layout { display: flex; height: calc(100vh - 56px); }
+  .layout { display: flex; height: calc(100vh - 56px); position: relative; }
 
   /* 사이드바 */
   .sidebar {
@@ -33,7 +50,31 @@
     background: white;
     overflow-y: auto;
     box-shadow: 2px 0 8px rgba(0,0,0,0.07);
-    z-index: 10;
+    z-index: 100;
+    transition: transform 0.3s ease;
+  }
+
+  /* 모바일 오버레이 */
+  .sidebar-overlay {
+    display: none;
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    z-index: 90;
+  }
+  .sidebar-overlay.visible { display: block; }
+
+  /* 모바일 */
+  @media (max-width: 640px) {
+    .sidebar-toggle { display: flex; }
+    .sidebar {
+      position: absolute;
+      top: 0; left: 0;
+      height: 100%;
+      transform: translateX(-100%);
+      z-index: 100;
+    }
+    .sidebar.open { transform: translateX(0); }
   }
 
   /* Day 탭 */
@@ -155,12 +196,16 @@
     <h1>🗾 삿포로 가족여행 지도</h1>
     <p>2026년 4월 24일 출발 · 4박5일 · 👨‍👩‍👧 3인 가족</p>
   </div>
+  <button class="sidebar-toggle" onclick="toggleSidebar()" id="toggleBtn">☰</button>
 </div>
 
 <div class="layout">
 
+  <!-- 모바일 오버레이 -->
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
   <!-- 사이드바 -->
-  <div class="sidebar">
+  <div class="sidebar" id="sidebar">
     <div class="day-tabs" id="dayTabs"></div>
     <div class="place-list" id="placeList"></div>
   </div>
@@ -398,12 +443,36 @@ function focusLocation(id) {
   map.setZoom(14);
   google.maps.event.trigger(markers[id], "click");
   highlightSidebarItem(id);
+  // 모바일: 장소 선택 시 사이드바 자동 닫기
+  if (window.innerWidth <= 640) closeSidebar();
 }
 
 function highlightSidebarItem(id) {
   document.querySelectorAll(".place-item").forEach(el => el.classList.remove("active"));
   const el = document.getElementById("item-" + id);
   if (el) { el.classList.add("active"); el.scrollIntoView({ block: "nearest" }); }
+}
+
+// ──────────────────────────────────────────────
+// 사이드바 토글 (모바일)
+// ──────────────────────────────────────────────
+function toggleSidebar() {
+  const sidebar = document.getElementById("sidebar");
+  const overlay = document.getElementById("sidebarOverlay");
+  const isOpen = sidebar.classList.contains("open");
+  if (isOpen) {
+    closeSidebar();
+  } else {
+    sidebar.classList.add("open");
+    overlay.classList.add("visible");
+    document.getElementById("toggleBtn").textContent = "✕";
+  }
+}
+
+function closeSidebar() {
+  document.getElementById("sidebar").classList.remove("open");
+  document.getElementById("sidebarOverlay").classList.remove("visible");
+  document.getElementById("toggleBtn").textContent = "☰";
 }
 
 // API 키 오류 처리
