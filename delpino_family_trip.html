@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🏖️ 델피노 리조트 2박3일 가족여행</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif; background: #f0f4f8; color: #2d3748; }
+  .hero { background: linear-gradient(135deg, #1a73c8 0%, #0ea5e9 50%, #38bdf8 100%); color: white; padding: 36px 20px 28px; text-align: center; }
+  .hero h1 { font-size: 22px; font-weight: 800; margin-bottom: 6px; letter-spacing: -0.5px; }
+  .hero p { font-size: 13px; opacity: 0.88; }
+  .badge-row { display: flex; justify-content: center; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
+  .badge { background: rgba(255,255,255,0.22); border-radius: 20px; padding: 4px 12px; font-size: 12px; font-weight: 600; }
+  .container { max-width: 480px; margin: 0 auto; padding: 16px; }
+  .day-card { background: white; border-radius: 16px; margin-bottom: 16px; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,0.07); }
+  .day-header { padding: 14px 18px 12px; display: flex; align-items: center; gap: 10px; }
+  .day-header.d1 { background: linear-gradient(90deg, #f97316, #fb923c); }
+  .day-header.d2 { background: linear-gradient(90deg, #0ea5e9, #38bdf8); }
+  .day-header.d3 { background: linear-gradient(90deg, #10b981, #34d399); }
+  .day-label { background: rgba(255,255,255,0.28); color: white; font-size: 11px; font-weight: 800; border-radius: 8px; padding: 2px 9px; }
+  .day-title { color: white; font-size: 14px; font-weight: 700; }
+  .timeline { padding: 4px 0 8px; }
+  .stop { display: flex; gap: 0; padding: 0 16px; }
+  .stop-left { display: flex; flex-direction: column; align-items: center; width: 36px; flex-shrink: 0; }
+  .dot { width: 12px; height: 12px; border-radius: 50%; border: 2.5px solid #cbd5e1; background: white; margin-top: 14px; flex-shrink: 0; }
+  .dot.food { border-color: #f97316; }
+  .dot.cafe { border-color: #8b5cf6; }
+  .dot.spot { border-color: #0ea5e9; }
+  .dot.resort { border-color: #10b981; }
+  .dot.night { border-color: #6366f1; }
+  .line { width: 2px; background: #e2e8f0; flex: 1; margin-top: 2px; }
+  .stop:last-child .line { display: none; }
+  .stop-right { flex: 1; padding: 10px 0 10px 6px; }
+  .stop-time { font-size: 11px; color: #94a3b8; font-weight: 600; margin-bottom: 2px; }
+  .stop-name { font-size: 14px; font-weight: 700; color: #1e293b; margin-bottom: 3px; }
+  .stop-name .tag { font-size: 10px; font-weight: 700; border-radius: 6px; padding: 1px 7px; margin-left: 5px; vertical-align: middle; }
+  .tag-food { background: #fff7ed; color: #ea580c; }
+  .tag-cafe { background: #f5f3ff; color: #7c3aed; }
+  .tag-spot { background: #eff6ff; color: #1d4ed8; }
+  .tag-resort { background: #f0fdf4; color: #16a34a; }
+  .tag-night { background: #eef2ff; color: #4338ca; }
+  .stop-desc { font-size: 12px; color: #64748b; line-height: 1.5; }
+  .tip-box { margin: 8px 16px 14px; background: #fffbeb; border-left: 3px solid #f59e0b; border-radius: 0 8px 8px 0; padding: 8px 12px; font-size: 12px; color: #92400e; line-height: 1.6; }
+  .tip-box strong { color: #d97706; }
+  .section-title { font-size: 13px; font-weight: 800; color: #475569; margin: 18px 0 8px; padding: 0 2px; letter-spacing: 0.3px; }
+  .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+  .info-card { background: white; border-radius: 12px; padding: 12px 14px; box-shadow: 0 1px 6px rgba(0,0,0,0.06); }
+  .info-card h4 { font-size: 12px; color: #64748b; margin-bottom: 6px; }
+  .info-card p { font-size: 12px; color: #1e293b; line-height: 1.6; font-weight: 500; }
+  .checklist { background: white; border-radius: 12px; padding: 14px 16px; box-shadow: 0 1px 6px rgba(0,0,0,0.06); margin-bottom: 16px; }
+  .checklist h4 { font-size: 13px; font-weight: 700; color: #1e293b; margin-bottom: 10px; }
+  .check-item { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 6px; font-size: 12.5px; color: #374151; line-height: 1.5; }
+  .check-item::before { content: "□"; color: #94a3b8; flex-shrink: 0; font-size: 14px; line-height: 1.3; }
+  .footer { text-align: center; padding: 16px; font-size: 11px; color: #94a3b8; }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <h1>🏖️ 델피노 리조트 2박3일 가족여행</h1>
+  <p>강원도 고성 · 속초 · 설악 완전 정복 코스</p>
+  <div class="badge-row">
+    <span class="badge">👨‍👩‍👧 3인 가족</span>
+    <span class="badge">🚗 자차 이동</span>
+    <span class="badge">👧 수아 (7세)</span>
+    <span class="badge">🍺 야간 술 한 잔 포함</span>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- DAY 1 -->
+  <p class="section-title">DAY 1</p>
+  <div class="day-card">
+    <div class="day-header d1">
+      <span class="day-label">Day 1</span>
+      <span class="day-title">출발 → 아침겸점심 → 눈썰매 → 속초 → 체크인</span>
+    </div>
+    <div class="timeline">
+
+      <div class="stop">
+        <div class="stop-left"><div class="dot spot"></div><div class="line"></div></div>
+        <div class="stop-right">
+          <div class="stop-time">07:00 AM · 출발</div>
+          <div class="stop-name">🚗 서울 출발 <span class="tag tag-spot">교통 꿀팁</span></div>
+          <div class="stop-desc">서울양양고속도로 이용. 오전 7시 전 출발 시 홍천~양양 정체 없음. 아침은 홍천에서 해결 예정이니 가볍게 출발!</div>
+        </div>
+      </div>
+
+      <div class="stop">
+        <div class="stop-left"><div class="dot food"></div><div class="line"></div></div>
+        <div class="stop-right">
+          <div class="stop-time">08:20 AM · 홍천 (아침겸점심)</div>
+          <div class="stop-name">🍽️ 약이되는밥상 <span class="tag tag-food">수아 브런치</span></div>
+          <div class="stop-desc">홍천 IC 인근 건강 한정식. 수아도 먹기 편한 나물·돌솥밥 구성. 평점 4.1 ⭐ 주말 08:00 오픈. 눈썰매 전 배 든든히 채우고 출발!</div>
+        </div>
+      </div>
+
+      <div class="stop">
+        <div class="stop-left"><div class="dot spot"></div><div class="line"></div></div>
+        <div class="stop-right">
+          <div class="stop-time">09:30 AM · 홍천</div>
+          <div class="stop-name">⛷️ 가람리조트 눈썰매장 <span class="tag tag-spot">수아 필수</span></div>
+          <div class="stop-desc">수아 눈썰매 천국! 오전 일찍 타야 줄 짧아요. 핫초코 한 잔 챙겨주면 완벽. 약 2시간 신나게 즐기고 출발.</div>
+        </div>
+      </div>
+
+      <div class="stop">
+        <div class="stop-left"><div class="dot spot"></div><div class="line"></div></div>
+        <div class="stop-right">
+          <div class="stop-time">12:30 PM · 속초</div>
+          <div class="stop-name">🛒 속초 관광수산시장 <span class="tag tag-spot">쇼핑+간식</span></div>
+          <div class="stop-desc">닭강정·오징어순대 필수! 저녁 야간 안주용 해산물도 여기서 구입. 수아 간식거리도 넘쳐나요.</div>
+        </div>
+      </div>
+
+      <div class="stop">
+        <div class="stop-left"><div class="dot food"></div><div class="line"></div></div>
+        <div class="stop-right">
+          <div class="stop-time">02:00 PM · 속초</div>
+          <div class="stop-name">🍱 돈까스렛 <span class="tag tag-food">수아 ❤️ 식당</span></div>
+          <div class="stop-desc">평점 4.7 ⭐ 속초 돈가스 맛집. 치즈카츠가 수아 픽! 어른도 함박·커리 맛있어요. 11:00~20:00 영업.</div>
+        </div>
+      </div>
+
+      <div class="stop">
+        <div class="stop-left"><div class="dot cafe"></div><div class="line"></div></div>
+        <div class="stop-right">
+          <div class="stop-time">03:30 PM · 속초 카페</div>
+          <div class="stop-name">☕ 카페너래 <span class="tag tag-cafe">엄마 라떼 타임</span></div>
+          <div class="stop-desc">창문 너머 울산바위·설악산 뷰! 평점 4.7 ⭐ 조용하고 분위기 감성적. 라떼+스콘 추천. ⚠️ 수요일 휴무 꼭 확인!</div>
+        </div>
+      </div>
+
+      <div class="stop">
+        <div class="stop-left"><div class="dot resort"></div><div class="line"></div></div>
+        <div class="stop-right">
+          <div class="stop-time">05:00 PM · 고성</div>
+          <div class="stop-name">🏨 델피노 리조트 체크인 <span class="tag tag-resort">베이스캠프</span></div>
+          <div class="stop-desc">체크인 후 리조트 산책. 편의점에서 음료 챙기고 수아랑 야경 감상.</div>
+        </div>
+      </div>
+
+      <div class="stop">
+        <div class="stop-left"><div class="dot night"></div></div>
+        <div class="stop-right">
+          <div class="stop-time">밤 · 숙소</div>
+          <div class="stop-name">🍺 Day 1 야간 술 한 잔 <span class="tag tag-night">어른 타임</span></div>
+          <div class="stop-desc">수산시장에서 사 온 오징어·꽃게 + 맥주·막걸리. 수아 재운 후 객실에서 조용히 한 잔. 전자레인지는 엘리베이터 옆 공용 이용.</div>
+        </div>
+      </div>
+
+    </div>
+    <div class="tip-box">💡 <strong>Day 1 꿀팁</strong> · 마트에서 맥주·안주 미리 구입해 가면 리조트 편의점 가격 절약. 수아 젖은 장갑 여분 꼭 챙기세요!</div>
+  </div>
+
+  <!-- DAY 2 -->
+  <p class="section-title">DAY 2</p>
+  <div class="day-card">
+    <div class="day-header d2">
+      <span class="day-label">Day 2</span>
+      <span class="day-title">오션플레이 → 오션뷰 카페 → 화진포 → 통일전망대 → 우동 저녁</span>
+    </div>
+    <div class="timeline">
+
+      <div class="stop">
+        <div class="stop-left"><div class="dot resort"></div><div class="line"></div></div>
+        <div class="stop-right">
+          <div class="stop-time">09:00 AM · 리조트</div>
+          <div class="stop-name">🌊 델피노 오션플레이 <span class="tag tag-resort">워터파크</span></div>
+          <div class="stop-desc">수아가 가장 기다리는 시간! 오전 오픈 직후 입장해야 슬라이드 줄 짧아요. 수영복·아쿠아슈즈 필수. 약 2.5시간 신나게!</div>
+        </div>
+      </div>
+
+      <div class="stop">
+        <div class="stop-left"><div class="dot cafe"></div><div class="line"></div></div>
+        <div class="stop-right">
+          <div class="stop-time">12:00 PM · 아야진</div>
+          <div class="stop-name">☕ 스위밍터틀 카페 <span class="tag tag-cafe">엄마 라떼 타임</span></div>
+          <div class="stop-desc">아야진 해변 바로 앞! 루프탑에서 동해 오션뷰 라떼. 인스타 성지급 분위기. 수아와 해변 산책 세트로 즐기기. ☎ 033-636-8628</div>
+        </div>
+      </div>
+
+      <div class="stop">
+        <div class="stop-left"><div class="dot spot"></div><div class="line"></div></div>
+        <div class="stop-right">
+          <div class="stop-time">02:00 PM · 고성</div>
+          <div class="stop-name">🐚 화진포 해양박물관 <span class="tag tag-spot">수아 교육</span></div>
+          <div class="stop-desc">조개·불가사리·해양생물 전시. 수아 엄청 좋아해요! 옆 화진포 석호 산책까지 세트로. 09:00~18:00 ☎ 033-682-7300</div>
+        </div>
+      </div>
+
+      <div class="stop">
+        <div class="stop-left"><div class="dot spot"></div><div class="line"></div></div>
+        <div class="stop-right">
+          <div class="stop-time">03:30 PM · 고성 최북단</div>
+          <div class="stop-name">🔭 고성 통일전망대 <span class="tag tag-spot">남한 최북단</span></div>
+          <div class="stop-desc">망원경으로 금강산 실제로 봐요! ⚠️ 입구 매표소에서 출입신청서 먼저 작성 필수. 09:00~18:30 ☎ 033-682-0088</div>
+        </div>
+      </div>
+
+      <div class="stop">
+        <div class="stop-left"><div class="dot food"></div><div class="line"></div></div>
+        <div class="stop-right">
+          <div class="stop-time">06:30 PM · 속초 저녁</div>
+          <div class="stop-name">🍜 우동당 <span class="tag tag-food">수아 ❤️ 우동·돈가스</span></div>
+          <div class="stop-desc">속초 숨은 맛집! 새우튀김우동이 시그니처. 돈가스도 일본 정통 수준. 웨이팅 있으니 오픈 전 대기 추천. ☎ 010-5185-5082</div>
+        </div>
+      </div>
+
+      <div class="stop">
+        <div class="stop-left"><div class="dot night"></div></div>
+        <div class="stop-right">
+          <div class="stop-time">밤 · 숙소</div>
+          <div class="stop-name">🍷 Day 2 야간 술 한 잔 <span class="tag tag-night">어른 타임</span></div>
+          <div class="stop-desc">오늘은 좀 더 풍성하게 — 와인 or 막걸리 + 거진항 해산물 포장 안주. 콘도 주방 있으면 직접 세팅 가능.</div>
+        </div>
+      </div>
+
+    </div>
+    <div class="tip-box">💡 <strong>Day 2 꿀팁</strong> · 통일전망대는 매표소(입구)에서 신청서 작성 안 하면 군 검문소에서 돌려보내요! 10분 여유 두고 도착하세요.</div>
+  </div>
+
+  <!-- DAY 3 -->
+  <p class="section-title">DAY 3</p>
+  <div class="day-card">
+    <div class="day-header d3">
+      <span class="day-label">Day 3</span>
+      <span class="day-title">설악 산책 → 테라크랩퍼 체험 → GO Beach 카페 → 게섯거라 → 귀가</span>
+    </div>
+    <div class="timeline">
+
+      <div class="stop">
+        <div class="stop-left"><div class="dot spot"></div><div class="line"></div></div>
+        <div class="stop-right">
+          <div class="stop-time">09:00 AM · 속초</div>
+          <div class="stop-name">🏔️ 울산바위 (신흥사~흔들바위) <span class="tag tag-spot">가벼운 산책</span></div>
+          <div class="stop-desc">수아 코스는 신흥사 입구~흔들바위 왕복 1시간. 수아가 흔들바위 밀어보며 엄청 신기해해요. 평점 4.8 ⭐</div>
+        </div>
+      </div>
+
+      <div class="stop">
+        <div class="stop-left"><div class="dot spot"></div><div class="line"></div></div>
+        <div class="stop-right">
+          <div class="stop-time">10:15 AM · 속초</div>
+          <div class="stop-name">🦀 테라크랩퍼 <span class="tag tag-spot">수아 최애 체험 ❤️</span></div>
+          <div class="stop-desc">게·곤충·개구리·도마뱀 직접 만져보는 생태 체험관! 수아 눈이 반짝반짝할 곳. 귀뚜라미 먹이주기·황토 만들기 체험 가능. 약 1.5~2시간. 평점 4.3 ⭐ 09:00~18:00</div>
+        </div>
+      </div>
+
+      <div class="stop">
+        <div class="stop-left"><div class="dot cafe"></div><div class="line"></div></div>
+        <div class="stop-right">
+          <div class="stop-time">12:00 PM · 고성</div>
+          <div class="stop-name">☕ GO Beach 5311 카페 <span class="tag tag-cafe">엄마 라떼 타임</span></div>
+          <div class="stop-desc">동해 오션뷰 통창 카페. 라떼+에이드 주문하고 마지막 날 여유 충전. 수아와 해변 바라보며 힐링. ☎ 010-4321-4541</div>
+        </div>
+      </div>
+
+      <div class="stop">
+        <div class="stop-left"><div class="dot food"></div><div class="line"></div></div>
+        <div class="stop-right">
+          <div class="stop-time">01:00 PM · 고성 (마지막 특식)</div>
+          <div class="stop-name">🦀 게섯거라 <span class="tag tag-food">여행 마무리 특식</span></div>
+          <div class="stop-desc">평점 4.7 ⭐ 대게·킹크랩 코스 테이블 가득! 오픈 1시 · 웨이팅 있으니 12:50 도착 추천. ☎ 033-631-6313</div>
+        </div>
+      </div>
+
+      <div class="stop">
+        <div class="stop-left"><div class="dot spot"></div></div>
+        <div class="stop-right">
+          <div class="stop-time">오후 2:30 PM · 귀가</div>
+          <div class="stop-name">🚗 서울 귀가 <span class="tag tag-spot">교통 꿀팁</span></div>
+          <div class="stop-desc">오후 4시 전 출발이면 양양~홍천 정체 없이 통과. 4시 넘기면 1~2시간 추가 각오.</div>
+        </div>
+      </div>
+
+    </div>
+    <div class="tip-box">💡 <strong>Day 3 꿀팁</strong> · 테라크랩퍼는 설악산 신흥사 입구 근처라 흔들바위 산책 후 바로 연계 가능! 게섯거라는 오픈 전 대기 필수 — 전화 예약 여부 사전 확인 추천.</div>
+  </div>
+
+  <!-- 수아 놀거리·먹거리 요약 -->
+  <p class="section-title">👧 수아 맛집 & 놀거리 요약</p>
+  <div class="info-grid">
+    <div class="info-card">
+      <h4>🍱 돈가스 (Day 1)</h4>
+      <p><strong>돈까스렛</strong><br>치즈카츠 수아 픽<br>평점 4.7 ⭐</p>
+    </div>
+    <div class="info-card">
+      <h4>🍜 우동 (Day 2)</h4>
+      <p><strong>우동당</strong><br>새우튀김우동<br>평점 4.3 ⭐</p>
+    </div>
+    <div class="info-card">
+      <h4>🦀 체험 (Day 3)</h4>
+      <p><strong>테라크랩퍼</strong><br>게·곤충 생태 체험<br>평점 4.3 ⭐</p>
+    </div>
+    <div class="info-card">
+      <h4>🏂 수아 액티비티</h4>
+      <p>가람 눈썰매<br>델피노 오션플레이<br>흔들바위 산책</p>
+    </div>
+  </div>
+
+  <p class="section-title">☕ 엄마 카페 라떼 타임 3곳</p>
+  <div class="info-grid">
+    <div class="info-card">
+      <h4>Day 1 · 속초</h4>
+      <p><strong>카페너래</strong><br>울산바위·설악 뷰<br>⚠️ 수요일 휴무</p>
+    </div>
+    <div class="info-card">
+      <h4>Day 2 · 아야진</h4>
+      <p><strong>스위밍터틀</strong><br>루프탑 동해뷰<br>☎ 033-636-8628</p>
+    </div>
+    <div class="info-card">
+      <h4>Day 3 · 고성</h4>
+      <p><strong>GO Beach 5311</strong><br>통창 오션뷰<br>☎ 010-4321-4541</p>
+    </div>
+    <div class="info-card">
+      <h4>🦀 마지막 특식</h4>
+      <p><strong>게섯거라</strong><br>대게·킹크랩 코스<br>☎ 033-631-6313</p>
+    </div>
+  </div>
+
+  <!-- 준비물 체크리스트 -->
+  <p class="section-title">📦 출발 전 체크리스트</p>
+  <div class="checklist">
+    <h4>🧳 짐 & 준비물</h4>
+    <div class="check-item">수영복·아쿠아슈즈 (오션플레이 필수)</div>
+    <div class="check-item">눈썰매 방수 장갑·여분 장갑 (가람 눈썰매)</div>
+    <div class="check-item">맥주·막걸리·와인 (마트에서 미리 구입)</div>
+    <div class="check-item">건어물·견과류 등 야간 안주</div>
+    <div class="check-item">수아 간식 (수산시장 간식 + 알파)</div>
+    <div class="check-item">통일전망대 신분증 (출입신청서 필요)</div>
+    <div class="check-item">게섯거라 전화 사전 확인 (☎ 033-631-6313)</div>
+    <div class="check-item">카페너래 수요일 휴무 확인!</div>
+    <div class="check-item">테라크랩퍼 체험비 현금 준비 (황토 만들기 등 유료)</div>
+  </div>
+
+</div>
+
+<div class="footer">수아와 함께 즐거운 가족 여행 되세요! 🌊🏔️❤️<br>by Claude · 2박3일 강원도 고성·속초 코스</div>
+
+</body>
+</html>
