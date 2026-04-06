@@ -39,6 +39,7 @@ const LOCATIONS = [
     day: 1, order: 1,
     desc: "15:00 도착. 공항 1F 스시 도장에서 빠른 점심 후 JR 탑승.",
     tip: "JR 쾌속 에어포트 15:37 탑승 → 삿포로역 16:14 도착 · 1,150엔/인",
+    webUrl: "https://www.new-chitose-airport.jp/ko/",
   },
   {
     id: "airport_sushi",
@@ -59,6 +60,7 @@ const LOCATIONS = [
     day: 1, order: 3,
     desc: "Day 1·2 숙소. 삿포로역 인근. 16:30 체크인.",
     tip: "짐 맡기고 홋카이도대학 바로 출발 가능",
+    webUrl: "https://www.karaksa-hotels.com/sapporo/",
   },
   {
     id: "hokkaido_univ",
@@ -69,6 +71,7 @@ const LOCATIONS = [
     day: 1, order: 4,
     desc: "4월 말 벚꽃 절정. 포플러 가로수길 + 클라크 박사 동상 사진. 입장 무료.",
     tip: "삿포로역에서 도보 10분. 17:00~18:30 황금 빛 사진 타임",
+    webUrl: "https://www.hokudai.ac.jp/",
   },
   {
     id: "garaku",
@@ -79,6 +82,7 @@ const LOCATIONS = [
     day: 1, order: 5,
     desc: "삿포로 스프카레 1위. 수아는 매운맛 1단계, 어른 10단계. 치킨채소 추천.",
     tip: "타누키코지 근처. 17:00 오픈 전 웨이팅 등록 추천 (TableCheck 앱)",
+    webUrl: "https://tablecheck.com/ja/shops/garaku/reserve",
   },
   {
     id: "susukino_bar",
@@ -103,6 +107,7 @@ const LOCATIONS = [
     day: 2, order: 1,
     desc: "홋카이도 한정 편의점! 오니기리+미소시루+홋카이도 우유 아침 세트. 07:30 출발 전.",
     tip: "세이코마트는 일반 편의점과 달리 홋카이도 로컬 식재료 사용. 꼭 경험해봐요!",
+    webUrl: "https://www.seicomart.co.jp/",
   },
   {
     id: "jr_sapporo_otaru",
@@ -113,6 +118,7 @@ const LOCATIONS = [
     day: 2, order: 2,
     desc: "09:00 삿포로역 출발 → 09:34 오타루역 도착. 640엔/인.",
     tip: "IC카드(Suica) 사용 가능. 오타루역에서 운하까지 도보 10분",
+    webUrl: "https://www.jrhokkaido.co.jp/",
   },
   {
     id: "otaru_canal",
@@ -123,6 +129,7 @@ const LOCATIONS = [
     day: 2, order: 3,
     desc: "오타루 여행 상징. 운하변 돌바닥 산책 + 창고 건물 배경 가족사진 필수.",
     tip: "오전 빛이 사진 황금 타임! 수아와 운하변 걷기 20~30분",
+    webUrl: "https://otaru.gr.jp/",
   },
   {
     id: "daisho_garasu",
@@ -133,6 +140,7 @@ const LOCATIONS = [
     day: 2, order: 4,
     desc: "오타루 대표 유리공예관. 에칭·그림 그리기 체험 30~45분, 1,500~2,500엔/인.",
     tip: "☎ 0134-31-2784 · 09:00~19:00. 예약 필수! 수아도 참여 가능",
+    webUrl: "https://www.otaru-glass.jp/",
   },
   {
     id: "otaru_sankaku",
@@ -143,6 +151,7 @@ const LOCATIONS = [
     day: 2, order: 5,
     desc: "오타루역 바로 옆 해산물 시장. 성게·연어알·게 덮밥 점심. 신선도 보장!",
     tip: "시장 내 식당에서 해산물 고르면 즉석 조리해줘요. 오니기리 간식도 구입",
+    webUrl: "https://otaru-sankaku.com/",
   },
   {
     id: "sapporo_beer_museum",
@@ -153,6 +162,7 @@ const LOCATIONS = [
     day: 2, order: 6,
     desc: "일본 유일 맥주 박물관. 무료 자유 견학 + 유료 시음. 아빠 강력 추천.",
     tip: "최종 입장 17:30. 삿포로 클래식·흑맥주 비교 세트 1,000엔. 가든 레스토랑 예약 권장",
+    webUrl: "https://www.sapporobeer.jp/brewery/s_museum/",
   },
   {
     id: "beer_garden",
@@ -163,6 +173,7 @@ const LOCATIONS = [
     day: 2, order: 7,
     desc: "박물관 내 레스토랑. 징기스칸+해산물 구이+삿포로 클래식 생맥주. 야외 가든 분위기 최고.",
     tip: "성수기 웨이팅 있으니 도착 즉시 대기 등록. 수아 아이 메뉴 있음",
+    webUrl: "https://www.sapporo-bier-garten.jp/",
   },
 
   // ═══════════════════════════════════════
@@ -177,6 +188,7 @@ const LOCATIONS = [
     day: 3, order: 1,
     desc: "편의점 아침 두 번째! 빵+커피+수아 주먹밥. 체크아웃 전 빠르게.",
     tip: "세이코마트 카운터 핫스낵(치킨·감자튀김)도 수아 인기 메뉴",
+    webUrl: "https://www.seicomart.co.jp/",
   },
   {
     id: "shiroi_koibito",
@@ -187,6 +199,7 @@ const LOCATIONS = [
     day: 3, order: 2,
     desc: "홋카이도 대표 과자 테마파크! 직접 반죽·굽기·포장. 약 45분, 1,000~1,500엔/인.",
     tip: "☎ 011-666-1481 · 09:00~18:00. 지하철 미야노사와역 도보 7분. 예약 필수!",
+    webUrl: "https://www.shiroikoibitopark.jp/",
   },
   {
     id: "shiroi_cafe",
@@ -197,6 +210,7 @@ const LOCATIONS = [
     day: 3, order: 3,
     desc: "파크 내 레스토랑. 수아가 구운 쿠키 들고 파크 카페에서 점심!",
     tip: "파크 입장 후 카페 예약 권장. 로맨틱 유럽풍 인테리어 엄마 사진 포인트",
+    webUrl: "https://www.shiroikoibitopark.jp/",
   },
   {
     id: "hotel_theknot",
@@ -207,6 +221,7 @@ const LOCATIONS = [
     day: 3, order: 4,
     desc: "Day 3·4 숙소. 스스키노 중심. 카락사에서 짐 찾아 14:30 체크인.",
     tip: "와규 특식 식당이 숙소 근처라 저녁 이동 편리",
+    webUrl: "https://www.theknot-hotels.com/sapporo/",
   },
   {
     id: "odori_park",
@@ -217,6 +232,7 @@ const LOCATIONS = [
     day: 3, order: 5,
     desc: "삿포로 중심부 벚꽃. TV탑 배경 가족사진 = 삿포로 대표 포토스팟.",
     tip: "15:30~17:00 황금 빛 사진 타임. 수아와 꽃 아래 피크닉 분위기",
+    webUrl: "https://odori-park.jp/",
   },
   {
     id: "yakiniku_ushiwaka",
@@ -251,6 +267,7 @@ const LOCATIONS = [
     day: 4, order: 2,
     desc: "삿포로 최고 벚꽃 명소! 원숭이산 벚꽃 터널 + 홋카이도 신궁 도리이 사진.",
     tip: "지하철 도자이선 마루야마공원역 하차. 입장 무료. 주말 피크닉 인파 많아요",
+    webUrl: "https://hokkaido-jingu.or.jp/",
   },
   {
     id: "shabu_maruyama",
@@ -261,6 +278,7 @@ const LOCATIONS = [
     day: 4, order: 3,
     desc: "홋카이도 와규 샤뷰샤뷰. 부드러운 고기라 수아도 맛있게! 어린이 세트 있음.",
     tip: "예약 권장. 마루야마 공원 산책 후 12:30 입장 추천",
+    webUrl: "https://www.on-yasai.co.jp/",
   },
   {
     id: "kita_tamayura",
@@ -271,6 +289,7 @@ const LOCATIONS = [
     day: 4, order: 4,
     desc: "삿포로 시내 시전(노면전차) 20분! 천연 온천, 내탕·노천탕 완비.",
     tip: "☎ 011-562-2600 · 10:00~23:00 · 성인 ~800엔 · 어린이 ~400엔. 타월 현지 대여 가능",
+    webUrl: "https://www.kitanotamayura.com/araizan/",
   },
   {
     id: "tanukikoji",
@@ -281,6 +300,7 @@ const LOCATIONS = [
     day: 4, order: 5,
     desc: "삿포로 최대 아케이드. 로이즈·시로이코이비토·六花亭 식품 기념품 천국.",
     tip: "온천 귀환 후 17:00~18:30. 내일 아침도 살 수 있으니 오늘은 가볍게",
+    webUrl: "https://www.tanukikoji.or.jp/",
   },
   {
     id: "nemuro_hanamaru",
@@ -291,6 +311,7 @@ const LOCATIONS = [
     day: 4, order: 6,
     desc: "삿포로 최고 회전초밥! 성게·연어알·게 등 홋카이도 해산물 총집합.",
     tip: "JR타워 스텔라플레이스 6F. 웨이팅 있으니 19:00 전 도착 추천",
+    webUrl: "https://www.sushi-hanamaru.com/",
   },
   {
     id: "izakaya_final",
@@ -315,6 +336,7 @@ const LOCATIONS = [
     day: 5, order: 1,
     desc: "삿포로역 지하 파세오 베이커리. 빠른 아침 + 마지막 기념품 쇼핑.",
     tip: "09:00~10:00. JR타워 지하 식품관도 여기서 연계 가능",
+    webUrl: "https://www.paseo.co.jp/",
   },
   {
     id: "jr_airport",
@@ -325,6 +347,7 @@ const LOCATIONS = [
     day: 5, order: 2,
     desc: "10:20 삿포로역 출발 → 10:57 신치토세 도착. 1,150엔/인.",
     tip: "13:00 출발에 맞춰 10:20 기차 탑승 필수! 여유롭게 수속",
+    webUrl: "https://www.jrhokkaido.co.jp/",
   },
   {
     id: "airport_ramen",
@@ -335,6 +358,7 @@ const LOCATIONS = [
     day: 5, order: 3,
     desc: "공항 3층 라멘도조. 홋카이도 미소라멘으로 마지막 식사!",
     tip: "11:30~12:30 여유롭게. 수아 버터콘 미소라멘 추천",
+    webUrl: "https://www.new-chitose-airport.jp/ko/spend/eat/ramen/",
   },
   {
     id: "airport_depart",
@@ -345,6 +369,7 @@ const LOCATIONS = [
     day: 5, order: 4,
     desc: "13:00 출발! 홋카이도 4박5일 마무리.",
     tip: "면세점에서 마지막 쇼핑. 도라에몽 공항 뮤지엄 수아 잠깐 방문도 OK",
+    webUrl: "https://www.new-chitose-airport.jp/ko/",
   },
 
 ];

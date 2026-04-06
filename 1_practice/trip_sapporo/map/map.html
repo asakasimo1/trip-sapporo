@@ -124,6 +124,17 @@
     margin-top: 5px;
     border-radius: 0 4px 4px 0;
   }
+  .place-links { display: flex; gap: 5px; margin-top: 7px; flex-wrap: wrap; }
+  .link-btn {
+    display: inline-flex; align-items: center; gap: 3px;
+    font-size: 11px; font-weight: 700;
+    padding: 3px 9px; border-radius: 20px;
+    text-decoration: none; cursor: pointer;
+    transition: opacity 0.15s;
+  }
+  .link-btn:hover { opacity: 0.75; }
+  .link-btn-map  { background: #eff6ff; color: #1d4ed8; }
+  .link-btn-web  { background: #f0fdf4; color: #16a34a; }
   .order-badge {
     background: var(--day-color, #94a3b8);
     color: white;
@@ -297,14 +308,19 @@ function renderMarkers() {
     });
 
     marker.addListener("click", () => {
+      const mapUrl = `https://maps.google.com/?q=${loc.lat},${loc.lng}`;
       const content = `
-        <div style="max-width:220px;font-family:'Apple SD Gothic Neo',sans-serif">
+        <div style="max-width:230px;font-family:'Apple SD Gothic Neo',sans-serif">
           <div style="font-size:15px;font-weight:800;color:#1e293b;margin-bottom:2px">
             ${cat.icon} ${loc.name}
           </div>
           <div style="font-size:11px;color:#94a3b8;margin-bottom:6px">${loc.nameJp}</div>
           <div style="font-size:12px;color:#374151;line-height:1.6">${loc.desc}</div>
           ${loc.tip ? `<div style="font-size:11px;color:#92400e;background:#fffbeb;padding:5px 8px;border-radius:4px;margin-top:6px;border-left:3px solid #f59e0b">💡 ${loc.tip}</div>` : ""}
+          <div style="margin-top:8px;display:flex;gap:5px;flex-wrap:wrap;">
+            <a href="${mapUrl}" target="_blank" style="font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;background:#eff6ff;color:#1d4ed8;text-decoration:none;">🗺 구글맵</a>
+            ${loc.webUrl ? `<a href="${loc.webUrl}" target="_blank" style="font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;background:#f0fdf4;color:#16a34a;text-decoration:none;">🔗 공식사이트</a>` : ""}
+          </div>
           <div style="margin-top:6px;font-size:11px;color:white;background:${dayInfo.color};display:inline-block;padding:2px 8px;border-radius:10px;font-weight:700">${dayInfo.label}</div>
         </div>`;
       infoWindow.setContent(content);
@@ -397,6 +413,7 @@ function renderPlaceList() {
 function placeItemHTML(loc) {
   const dayInfo = loc.day > 0 ? DAY_COLORS[loc.day] : { color: "#94a3b8" };
   const cat = CATEGORY[loc.category];
+  const mapUrl = `https://maps.google.com/?q=${loc.lat},${loc.lng}`;
   return `
     <div class="place-item" id="item-${loc.id}" onclick="focusLocation('${loc.id}')">
       <div class="place-top">
@@ -408,6 +425,10 @@ function placeItemHTML(loc) {
       <div class="place-namejp">${loc.nameJp}</div>
       <div class="place-desc">${loc.desc}</div>
       ${loc.tip ? `<div class="place-tip">💡 ${loc.tip}</div>` : ""}
+      <div class="place-links" onclick="event.stopPropagation()">
+        <a class="link-btn link-btn-map" href="${mapUrl}" target="_blank">🗺 구글맵</a>
+        ${loc.webUrl ? `<a class="link-btn link-btn-web" href="${loc.webUrl}" target="_blank">🔗 공식사이트</a>` : ""}
+      </div>
     </div>`;
 }
 
