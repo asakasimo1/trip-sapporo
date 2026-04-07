@@ -52,6 +52,10 @@
   .tl-group-label.lb-activity { background: #0ea5e9; }
   .tl-group-label.lb-spot { background: #64748b; }
   .tl-group-label.lb-night { background: #6366f1; }
+  .tl-group-label.lb-walk  { background: #64748b; }
+
+  .dot.walk { border-color: #64748b; }
+  .tag-walk { background: #f1f5f9; color: #475569; }
 
   .stop { display: flex; gap: 0; padding: 0 16px; }
   .stop-left { display: flex; flex-direction: column; align-items: center; width: 36px; flex-shrink: 0; }
@@ -161,6 +165,14 @@
     <div class="transport-row"><span class="t-time">13:30</span><span class="t-arrow">→</span> 삿포로 귀환 → 카락사 체크아웃 → 더낫 체크인</div>
   </div>
   <div class="transport-card">
+    <h4>DAY 4 · 마루야마 + 온천 (4/27)</h4>
+    <div class="transport-row"><span class="t-time">09:00</span><span class="t-arrow">→</span> 지하철 도자이선 스스키노 → 마루야마공원역 (約10분, IC카드)</div>
+    <div class="transport-row"><span class="t-time">도보</span><span class="t-arrow"></span> 마루야마공원역 → 카페 5분 → 공원·신궁 도보 산책</div>
+    <div class="transport-row"><span class="t-time">14:00</span><span class="t-arrow">→</span> 시전(市電) 노면전차 마루야마 → 荒井山停留場 (約20분)</div>
+    <div class="transport-row"><span class="t-time">도보</span><span class="t-arrow"></span> 荒井山停留場 하차 → 북のたまゆら 온천 도보 3분</div>
+    <div class="transport-row"><span class="t-time">16:30</span><span class="t-arrow">→</span> 시전 귀환 → 타누키코지 → JR타워 (도보 5분)</div>
+  </div>
+  <div class="transport-card">
     <h4>DAY 5 · 출발 (4/28)</h4>
     <div class="transport-row"><span class="t-time">10:20</span><span class="t-arrow">→</span> 삿포로역 출발 JR 쾌속 에어포트 (1,150엔/인)</div>
     <div class="transport-row"><span class="t-time">10:57</span><span class="t-arrow">→</span> 신치토세 공항 도착 → 수속·면세점</div>
@@ -221,6 +233,17 @@
         </div>
       </div>
 
+      <!-- 도보 DAY1 -->
+      <div class="tl-group-label lb-walk">🚶 도보</div>
+      <div class="stop">
+        <div class="stop-left"><div class="dot walk"></div><div class="line"></div></div>
+        <div class="stop-right">
+          <div class="stop-time">16:15~19:00</div>
+          <div class="stop-name">🚶 DAY 1 도보 구간 <span class="tag tag-walk">도보</span></div>
+          <div class="stop-desc">삿포로역 → 카락사 호텔 도보 5분 · 호텔 → 홋카이도대학 포플러길 도보 10분 · 대학 내 산책 약 1km · 홋카이도대학 → GARAKU(타누키코지) 도보 약 20분.</div>
+        </div>
+      </div>
+
       <!-- 저녁 -->
       <div class="tl-group-label lb-dinner">🍽️ 저녁</div>
       <div class="stop">
@@ -278,6 +301,17 @@
           <div class="stop-time">09:00 · 삿포로역</div>
           <div class="stop-name">🚃 JR 삿포로 → 오타루 출발 <span class="tag tag-trs">34분 · 640엔</span></div>
           <div class="stop-desc">JR 函館本線 오타루행. 09:00 출발 → 09:34 오타루역 도착. IC카드 이용 가능. 오타루역에서 운하까지 도보 10분.</div>
+        </div>
+      </div>
+
+      <!-- 도보 DAY2 -->
+      <div class="tl-group-label lb-walk">🚶 도보</div>
+      <div class="stop">
+        <div class="stop-left"><div class="dot walk"></div><div class="line"></div></div>
+        <div class="stop-right">
+          <div class="stop-time">09:34~15:30</div>
+          <div class="stop-name">🚶 오타루 시내 도보 <span class="tag tag-walk">도보</span></div>
+          <div class="stop-desc">오타루역 → 운하 도보 10분 · 운하 → 大正硝子館 도보 5분 · 삼각시장 → 카페(르 포토푸) 도보 5분 · 시내 전체 골목 도보 이동.</div>
         </div>
       </div>
 
@@ -404,6 +438,17 @@
         </div>
       </div>
 
+      <!-- 도보 DAY3 -->
+      <div class="tl-group-label lb-walk">🚶 도보</div>
+      <div class="stop">
+        <div class="stop-left"><div class="dot walk"></div><div class="line"></div></div>
+        <div class="stop-right">
+          <div class="stop-time">10:00~17:00</div>
+          <div class="stop-name">🚶 DAY 3 도보 구간 <span class="tag tag-walk">도보</span></div>
+          <div class="stop-desc">미야노사와역 → 시로이코이비토 파크 도보 7분 · 파크 내 체험·견학 도보 · 오도리 공원 산책 약 1.5km · 오도리 → 타누키코지 도보 5분.</div>
+        </div>
+      </div>
+
       <!-- 호텔 이동 -->
       <div class="tl-group-label lb-spot">🏨 호텔 이동</div>
       <div class="stop">
@@ -450,6 +495,33 @@
     <div class="hotel-banner"><p>🏨 더낫 호텔 삿포로 <span>· 4박차 (4/27~4/28)</span></p></div>
     <div class="timeline">
 
+      <!-- 교통 DAY4 -->
+      <div class="tl-group-label lb-transport">🚃 교통</div>
+      <div class="stop">
+        <div class="stop-left"><div class="dot trs"></div><div class="line"></div></div>
+        <div class="stop-right">
+          <div class="stop-time">08:00 · 더낫 호텔</div>
+          <div class="stop-name">🚇 지하철 도자이선 <span class="tag tag-trs">스스키노 → 마루야마공원 10분</span></div>
+          <div class="stop-desc">더낫 호텔(스스키노) → 스스키노역 도보 2분 → 지하철 도자이선 탑승 → 마루야마공원역 하차. 약 10분 · IC카드 이용.</div>
+        </div>
+      </div>
+      <div class="stop">
+        <div class="stop-left"><div class="dot trs"></div><div class="line"></div></div>
+        <div class="stop-right">
+          <div class="stop-time">14:00 · 마루야마</div>
+          <div class="stop-name">🚃 시전(市電) 노면전차 <span class="tag tag-trs">마루야마 → 荒井山停留場 20분</span></div>
+          <div class="stop-desc">마루야마 인근 시전 정류장 탑승 → 荒井山停留場 하차 → 北のたまゆら 온천 도보 3분. 약 20분 · 성인 210엔.</div>
+        </div>
+      </div>
+      <div class="stop">
+        <div class="stop-left"><div class="dot trs"></div><div class="line"></div></div>
+        <div class="stop-right">
+          <div class="stop-time">16:30 · 荒井山停留場</div>
+          <div class="stop-name">🚃 시전 귀환 → 타누키코지 <span class="tag tag-trs">시전+도보</span></div>
+          <div class="stop-desc">온천 후 시전 재탑승 → 스스키노 방향 하차 → JR타워(스텔라플레이스) 도보 5분.</div>
+        </div>
+      </div>
+
       <!-- 아침 카페 -->
       <div class="tl-group-label lb-breakfast">☕ 아침</div>
       <div class="stop">
@@ -458,6 +530,17 @@
           <div class="stop-time">08:30 · 마루야마 근처</div>
           <div class="stop-name">☕ 마루야마 동네 베이커리 카페 <span class="tag tag-cafe">엄마 라떼 아침</span></div>
           <div class="stop-desc">마루야마 공원 근처 로컬 베이커리. 신선한 빵+라떼+수아 크림빵으로 여유로운 아침. 추천: <strong>Boulangerie Cafe Chou Chou</strong> or 마루야마 동네 카페. 09:30 공원 입장 전 여유롭게.</div>
+        </div>
+      </div>
+
+      <!-- 도보 DAY4 -->
+      <div class="tl-group-label lb-walk">🚶 도보</div>
+      <div class="stop">
+        <div class="stop-left"><div class="dot walk"></div><div class="line"></div></div>
+        <div class="stop-right">
+          <div class="stop-time">08:15~14:00</div>
+          <div class="stop-name">🚶 마루야마 도보 이동 <span class="tag tag-walk">도보</span></div>
+          <div class="stop-desc">마루야마공원역 → 카페 도보 5분 · 마루야마 공원 내 벚꽃 산책 · 공원 → 홋카이도 신궁 도보 10분 · 신궁 → 샤뷰샤뷰 식당 도보 5분 · 荒井山停留場 하차 → 온천 도보 3분.</div>
         </div>
       </div>
 
@@ -550,6 +633,17 @@
           <div class="stop-time">09:00 · 삿포로역 지하</div>
           <div class="stop-name">🥐 삿포로역 파세오(PASEO) 베이커리 <span class="tag tag-cafe">빠른 아침</span></div>
           <div class="stop-desc">삿포로역 지하 파세오 내 베이커리. 크루아상+라떼+수아 크림빵으로 빠른 아침. 아침 식사 후 기념품 쇼핑 시작!</div>
+        </div>
+      </div>
+
+      <!-- 도보 DAY5 -->
+      <div class="tl-group-label lb-walk">🚶 도보</div>
+      <div class="stop">
+        <div class="stop-left"><div class="dot walk"></div><div class="line"></div></div>
+        <div class="stop-right">
+          <div class="stop-time">09:00~10:10</div>
+          <div class="stop-name">🚶 삿포로역·공항 도보 <span class="tag tag-walk">도보</span></div>
+          <div class="stop-desc">더낫 호텔 → 삿포로역 도보 5분 · 파세오·스텔라플레이스 기념품 쇼핑 도보 · 10:10 삿포로역 플랫폼 이동 · 공항 도착 후 수속·면세점 도보.</div>
         </div>
       </div>
 
