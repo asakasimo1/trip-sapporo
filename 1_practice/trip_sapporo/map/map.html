@@ -250,18 +250,19 @@ const ALL_DAYS = [0, 1, 2, 3, 4, 5];
 // ──────────────────────────────────────────────
 // Google Maps 초기화
 // ──────────────────────────────────────────────
-function initMap() {
+async function initMap() {
   document.getElementById("apiWarning").style.display = "none";
+
+  const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
+  window._AdvancedMarkerElement = AdvancedMarkerElement;
 
   map = new google.maps.Map(document.getElementById("map"), {
     center: { lat: 43.0686, lng: 141.3506 }, // 삿포로역
     zoom: 11,
+    mapId: "DEMO_MAP_ID",
     mapTypeControl: false,
     streetViewControl: false,
     fullscreenControl: true,
-    styles: [
-      { featureType: "poi", elementType: "labels", stylers: [{ visibility: "off" }] },
-    ],
   });
 
   infoWindow = new google.maps.InfoWindow();
@@ -275,7 +276,7 @@ function initMap() {
 // ──────────────────────────────────────────────
 function renderMarkers() {
   // 기존 마커·폴리라인 제거
-  Object.values(markers).forEach(m => m.setMap(null));
+  Object.values(markers).forEach(m => { m.map = null; });
   markers = {};
   polylines.forEach(p => p.setMap(null));
   polylines = [];
@@ -289,23 +290,40 @@ function renderMarkers() {
   filtered.forEach(loc => {
     const dayInfo = loc.day > 0 ? DAY_COLORS[loc.day] : { color: "#94a3b8", label: "미배정" };
     const cat = CATEGORY[loc.category];
+    const hasOrder = loc.order > 0;
 
-    const marker = new google.maps.Marker({
+    // 마커 HTML 요소 생성 (이모지 + 순서번호)
+    const pin = document.createElement("div");
+    pin.style.cssText = `
+      background: ${dayInfo.color};
+      border: 2.5px solid white;
+      border-radius: 50%;
+      width: ${hasOrder ? "44px" : "38px"};
+      height: ${hasOrder ? "44px" : "38px"};
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+      cursor: pointer;
+      user-select: none;
+      transition: transform 0.15s;
+    `;
+    pin.innerHTML = hasOrder
+      ? `<span style="font-size:18px;line-height:1">${cat.icon}</span>
+         <span style="font-size:11px;font-weight:800;color:white;line-height:1;font-family:Arial,sans-serif">${loc.order}</span>`
+      : `<span style="font-size:20px;line-height:1">${cat.icon}</span>`;
+
+    const marker = new window._AdvancedMarkerElement({
       position: { lat: loc.lat, lng: loc.lng },
       map,
       title: loc.name,
-      label: loc.order > 0
-        ? { text: String(loc.order), color: "white", fontWeight: "bold", fontSize: "11px" }
-        : { text: cat.icon, color: "white", fontSize: "12px" },
-      icon: {
-        path: google.maps.SymbolPath.CIRCLE,
-        scale: 16,
-        fillColor: dayInfo.color,
-        fillOpacity: 1,
-        strokeColor: "white",
-        strokeWeight: 2,
-      },
+      content: pin,
     });
+
+    pin.addEventListener("mouseover", () => { pin.style.transform = "scale(1.15)"; });
+    pin.addEventListener("mouseout",  () => { pin.style.transform = "scale(1)"; });
 
     marker.addListener("click", () => {
       const mapUrl = `https://maps.google.com/?q=${loc.lat},${loc.lng}`;
@@ -324,7 +342,7 @@ function renderMarkers() {
           <div style="margin-top:6px;font-size:11px;color:white;background:${dayInfo.color};display:inline-block;padding:2px 8px;border-radius:10px;font-weight:700">${dayInfo.label}</div>
         </div>`;
       infoWindow.setContent(content);
-      infoWindow.open(map, marker);
+      infoWindow.open({ map, anchor: marker });
       highlightSidebarItem(loc.id);
     });
 
@@ -514,7 +532,7 @@ window.gm_authFailure = function() {
   ========================================================
 -->
 <script
-  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAhxdwpaGV9CcYGTpL-bVdpxkQfHkxKmvk&callback=initMap&language=ko&region=JP"
+  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAhxdwpaGV9CcYGTpL-bVdpxkQfHkxKmvk&callback=initMap&language=ko&region=JP&libraries=marker&v=beta"
   async defer
   onerror="document.getElementById('apiWarning').style.display='block'">
 </script>
