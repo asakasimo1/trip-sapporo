@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>🗾 삿포로 가족여행 지도</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif; background: #f0f4f8; }
@@ -145,15 +146,9 @@
     display: flex; align-items: center; justify-content: center;
     flex-shrink: 0;
   }
-  .unassigned-label {
-    font-size: 11px; color: #94a3b8;
-    padding: 8px 16px 4px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
 
   /* 지도 */
+  #map-wrap { flex: 1; position: relative; }
   #map { width: 100%; height: 100%; }
 
   /* 범례 */
@@ -166,38 +161,20 @@
     padding: 10px 14px;
     box-shadow: 0 2px 10px rgba(0,0,0,0.12);
     font-size: 12px;
-    z-index: 5;
+    z-index: 500;
   }
   .legend-title { font-weight: 700; margin-bottom: 6px; color: #1e293b; }
   .legend-item { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; color: #374151; }
   .legend-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
 
-  /* API 키 경고 */
-  .api-warning {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: white;
-    border-radius: 16px;
-    padding: 24px 28px;
-    box-shadow: 0 4px 24px rgba(0,0,0,0.15);
-    text-align: center;
-    max-width: 360px;
-    z-index: 20;
+  /* Leaflet 팝업 커스텀 */
+  .leaflet-popup-content-wrapper {
+    border-radius: 12px !important;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15) !important;
+    padding: 0 !important;
   }
-  .api-warning h3 { font-size: 16px; color: #1e293b; margin-bottom: 8px; }
-  .api-warning p  { font-size: 13px; color: #64748b; line-height: 1.6; }
-  .api-warning code {
-    display: block;
-    background: #f1f5f9;
-    border-radius: 8px;
-    padding: 8px 12px;
-    font-size: 12px;
-    color: #e11d48;
-    margin: 10px 0;
-    word-break: break-all;
-  }
+  .leaflet-popup-content { margin: 12px 14px !important; min-width: 200px; }
+  .leaflet-container a { color: inherit; }
 </style>
 </head>
 <body>
@@ -222,156 +199,109 @@
   </div>
 
   <!-- 지도 -->
-  <div style="flex:1; position:relative;">
+  <div id="map-wrap">
     <div id="map"></div>
-
-    <!-- API 키 미설정 시 안내 -->
-    <div class="api-warning" id="apiWarning" style="display:none;">
-      <h3>🔑 Google Maps API 키 필요</h3>
-      <p>이 파일 하단 스크립트 태그의 <strong>YOUR_API_KEY</strong>를 발급받은 키로 교체하세요.</p>
-      <code>https://console.cloud.google.com/apis/credentials</code>
-      <p>Maps JavaScript API를 활성화한 후 키를 붙여넣으면 지도가 표시됩니다.</p>
-    </div>
-
-    <!-- 범례 -->
     <div class="legend" id="legend"></div>
   </div>
 
 </div>
 
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="locations.js"></script>
 <script>
 // ──────────────────────────────────────────────
 // 상태
 // ──────────────────────────────────────────────
-let map, markers = {}, polylines = [], activeDay = "all", infoWindow;
-const ALL_DAYS = [0, 1, 2, 3, 4, 5];
+let map, markers = {}, polylines = [], activeDay = "all";
 
 // ──────────────────────────────────────────────
-// Google Maps 초기화
+// 지도 초기화 (Leaflet + OpenStreetMap)
 // ──────────────────────────────────────────────
-async function initMap() {
-  document.getElementById("apiWarning").style.display = "none";
+map = L.map("map").setView([43.0686, 141.3506], 12);
 
-  const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
-  window._AdvancedMarkerElement = AdvancedMarkerElement;
+L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+  attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+  maxZoom: 19,
+}).addTo(map);
 
-  map = new google.maps.Map(document.getElementById("map"), {
-    center: { lat: 43.0686, lng: 141.3506 }, // 삿포로역
-    zoom: 11,
-    mapId: "DEMO_MAP_ID",
-    mapTypeControl: false,
-    streetViewControl: false,
-    fullscreenControl: true,
+// ──────────────────────────────────────────────
+// 커스텀 마커 아이콘 (이모지 + 순서번호)
+// ──────────────────────────────────────────────
+function createIcon(color, cat, order) {
+  const hasOrder = order > 0;
+  const size = hasOrder ? 44 : 38;
+  const inner = hasOrder
+    ? `<span style="font-size:18px;line-height:1">${cat.icon}</span>
+       <span style="font-size:11px;font-weight:800;color:white;line-height:1;font-family:Arial,sans-serif">${order}</span>`
+    : `<span style="font-size:20px;line-height:1">${cat.icon}</span>`;
+
+  return L.divIcon({
+    className: "",
+    html: `<div style="
+      background:${color};border:2.5px solid white;border-radius:50%;
+      width:${size}px;height:${size}px;
+      display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;
+      box-shadow:0 2px 10px rgba(0,0,0,0.3);cursor:pointer;
+    ">${inner}</div>`,
+    iconSize: [size, size],
+    iconAnchor: [size/2, size/2],
+    popupAnchor: [0, -(size/2 + 4)],
   });
-
-  infoWindow = new google.maps.InfoWindow();
-  renderSidebar();
-  renderMarkers();
-  renderLegend();
 }
 
 // ──────────────────────────────────────────────
-// 마커 렌더링
+// 마커 + 폴리라인 렌더링
 // ──────────────────────────────────────────────
 function renderMarkers() {
-  // 기존 마커·폴리라인 제거
-  Object.values(markers).forEach(m => { m.map = null; });
+  // 기존 제거
+  Object.values(markers).forEach(m => map.removeLayer(m));
   markers = {};
-  polylines.forEach(p => p.setMap(null));
+  polylines.forEach(p => map.removeLayer(p));
   polylines = [];
 
   const filtered = activeDay === "all"
     ? LOCATIONS
-    : activeDay === "unassigned"
-    ? LOCATIONS.filter(l => l.day === 0)
-    : LOCATIONS.filter(l => l.day === activeDay);
+    : LOCATIONS.filter(l => l.day === Number(activeDay));
 
   filtered.forEach(loc => {
-    const dayInfo = loc.day > 0 ? DAY_COLORS[loc.day] : { color: "#94a3b8", label: "미배정" };
-    const cat = CATEGORY[loc.category];
-    const hasOrder = loc.order > 0;
+    const dayInfo = DAY_COLORS[loc.day] || { color: "#94a3b8", label: "미배정" };
+    const cat = CATEGORY[loc.category] || { icon: "📍", label: "" };
+    const icon = createIcon(dayInfo.color, cat, loc.order);
+    const mapUrl = `https://maps.google.com/?q=${loc.lat},${loc.lng}`;
 
-    // 마커 HTML 요소 생성 (이모지 + 순서번호)
-    const pin = document.createElement("div");
-    pin.style.cssText = `
-      background: ${dayInfo.color};
-      border: 2.5px solid white;
-      border-radius: 50%;
-      width: ${hasOrder ? "44px" : "38px"};
-      height: ${hasOrder ? "44px" : "38px"};
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 1px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.3);
-      cursor: pointer;
-      user-select: none;
-      transition: transform 0.15s;
-    `;
-    pin.innerHTML = hasOrder
-      ? `<span style="font-size:18px;line-height:1">${cat.icon}</span>
-         <span style="font-size:11px;font-weight:800;color:white;line-height:1;font-family:Arial,sans-serif">${loc.order}</span>`
-      : `<span style="font-size:20px;line-height:1">${cat.icon}</span>`;
+    const marker = L.marker([loc.lat, loc.lng], { icon }).addTo(map);
 
-    const marker = new window._AdvancedMarkerElement({
-      position: { lat: loc.lat, lng: loc.lng },
-      map,
-      title: loc.name,
-      content: pin,
-    });
+    marker.bindPopup(`
+      <div style="max-width:230px;font-family:'Apple SD Gothic Neo',sans-serif;">
+        <div style="font-size:15px;font-weight:800;color:#1e293b;margin-bottom:2px;">
+          ${cat.icon} ${loc.name}
+        </div>
+        <div style="font-size:11px;color:#94a3b8;margin-bottom:6px;">${loc.nameJp}</div>
+        <div style="font-size:12px;color:#374151;line-height:1.6;">${loc.desc}</div>
+        ${loc.tip ? `<div style="font-size:11px;color:#92400e;background:#fffbeb;padding:5px 8px;border-radius:4px;margin-top:6px;border-left:3px solid #f59e0b;">💡 ${loc.tip}</div>` : ""}
+        <div style="margin-top:8px;display:flex;gap:5px;flex-wrap:wrap;">
+          <a href="${mapUrl}" target="_blank" style="font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;background:#eff6ff;color:#1d4ed8;text-decoration:none;">🗺 구글맵</a>
+          ${loc.webUrl ? `<a href="${loc.webUrl}" target="_blank" style="font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;background:#f0fdf4;color:#16a34a;text-decoration:none;">🔗 공식사이트</a>` : ""}
+        </div>
+        <div style="margin-top:6px;font-size:11px;color:white;background:${dayInfo.color};display:inline-block;padding:2px 8px;border-radius:10px;font-weight:700;">${dayInfo.label}</div>
+      </div>
+    `);
 
-    pin.addEventListener("mouseover", () => { pin.style.transform = "scale(1.15)"; });
-    pin.addEventListener("mouseout",  () => { pin.style.transform = "scale(1)"; });
-
-    marker.addListener("click", () => {
-      const mapUrl = `https://maps.google.com/?q=${loc.lat},${loc.lng}`;
-      const content = `
-        <div style="max-width:230px;font-family:'Apple SD Gothic Neo',sans-serif">
-          <div style="font-size:15px;font-weight:800;color:#1e293b;margin-bottom:2px">
-            ${cat.icon} ${loc.name}
-          </div>
-          <div style="font-size:11px;color:#94a3b8;margin-bottom:6px">${loc.nameJp}</div>
-          <div style="font-size:12px;color:#374151;line-height:1.6">${loc.desc}</div>
-          ${loc.tip ? `<div style="font-size:11px;color:#92400e;background:#fffbeb;padding:5px 8px;border-radius:4px;margin-top:6px;border-left:3px solid #f59e0b">💡 ${loc.tip}</div>` : ""}
-          <div style="margin-top:8px;display:flex;gap:5px;flex-wrap:wrap;">
-            <a href="${mapUrl}" target="_blank" style="font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;background:#eff6ff;color:#1d4ed8;text-decoration:none;">🗺 구글맵</a>
-            ${loc.webUrl ? `<a href="${loc.webUrl}" target="_blank" style="font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;background:#f0fdf4;color:#16a34a;text-decoration:none;">🔗 공식사이트</a>` : ""}
-          </div>
-          <div style="margin-top:6px;font-size:11px;color:white;background:${dayInfo.color};display:inline-block;padding:2px 8px;border-radius:10px;font-weight:700">${dayInfo.label}</div>
-        </div>`;
-      infoWindow.setContent(content);
-      infoWindow.open({ map, anchor: marker });
-      highlightSidebarItem(loc.id);
-    });
-
+    marker.on("click", () => highlightSidebarItem(loc.id));
     markers[loc.id] = marker;
   });
 
   // 동선 폴리라인 (day별 order 순)
-  drawRoutes(filtered);
-}
-
-// ──────────────────────────────────────────────
-// 동선 폴리라인
-// ──────────────────────────────────────────────
-function drawRoutes(filtered) {
   [1,2,3,4,5].forEach(d => {
     const dayLocs = filtered
       .filter(l => l.day === d && l.order > 0)
       .sort((a, b) => a.order - b.order);
-
     if (dayLocs.length < 2) return;
 
-    const pl = new google.maps.Polyline({
-      path: dayLocs.map(l => ({ lat: l.lat, lng: l.lng })),
-      geodesic: true,
-      strokeColor: DAY_COLORS[d].color,
-      strokeOpacity: 0.7,
-      strokeWeight: 3,
-      map,
-    });
+    const pl = L.polyline(
+      dayLocs.map(l => [l.lat, l.lng]),
+      { color: DAY_COLORS[d].color, opacity: 0.7, weight: 3, dashArray: "6,4" }
+    ).addTo(map);
     polylines.push(pl);
   });
 }
@@ -388,18 +318,18 @@ function renderTabs() {
   const tabsEl = document.getElementById("dayTabs");
   const tabs = [
     { key: "all", label: "전체" },
-    { key: 1, label: "D1 · 4/24", color: DAY_COLORS[1].color },
-    { key: 2, label: "D2 · 4/25", color: DAY_COLORS[2].color },
-    { key: 3, label: "D3 · 4/26", color: DAY_COLORS[3].color },
-    { key: 4, label: "D4 · 4/27", color: DAY_COLORS[4].color },
-    { key: 5, label: "D5 · 4/28", color: DAY_COLORS[5].color },
+    { key: "1", label: "D1 · 4/24", color: DAY_COLORS[1].color },
+    { key: "2", label: "D2 · 4/25", color: DAY_COLORS[2].color },
+    { key: "3", label: "D3 · 4/26", color: DAY_COLORS[3].color },
+    { key: "4", label: "D4 · 4/27", color: DAY_COLORS[4].color },
+    { key: "5", label: "D5 · 4/28", color: DAY_COLORS[5].color },
   ];
 
   tabsEl.innerHTML = tabs.map(t => `
     <button
       class="day-tab ${activeDay === t.key ? "active" : ""}"
       style="--day-color:${t.color || "#94a3b8"}"
-      onclick="selectDay(${JSON.stringify(t.key)})"
+      onclick="selectDay('${t.key}')"
     >${t.label}</button>
   `).join("");
 }
@@ -408,29 +338,15 @@ function renderPlaceList() {
   const listEl = document.getElementById("placeList");
   const filtered = activeDay === "all"
     ? LOCATIONS
-    : activeDay === "unassigned"
-    ? LOCATIONS.filter(l => l.day === 0)
-    : LOCATIONS.filter(l => l.day === activeDay);
+    : LOCATIONS.filter(l => l.day === Number(activeDay));
 
-  // 배정된 것과 미배정 분리
-  const assigned   = filtered.filter(l => l.day > 0).sort((a,b) => a.day - b.day || a.order - b.order);
-  const unassigned = filtered.filter(l => l.day === 0);
-
-  let html = "";
-  assigned.forEach(loc => { html += placeItemHTML(loc); });
-  if (unassigned.length > 0 && activeDay === "all") {
-    html += `<div class="unassigned-label">미배정 후보지</div>`;
-    unassigned.forEach(loc => { html += placeItemHTML(loc); });
-  } else if (activeDay === "unassigned") {
-    unassigned.forEach(loc => { html += placeItemHTML(loc); });
-  }
-
-  listEl.innerHTML = html;
+  const sorted = [...filtered].sort((a, b) => a.day - b.day || a.order - b.order);
+  listEl.innerHTML = sorted.map(loc => placeItemHTML(loc)).join("");
 }
 
 function placeItemHTML(loc) {
-  const dayInfo = loc.day > 0 ? DAY_COLORS[loc.day] : { color: "#94a3b8" };
-  const cat = CATEGORY[loc.category];
+  const dayInfo = DAY_COLORS[loc.day] || { color: "#94a3b8" };
+  const cat = CATEGORY[loc.category] || { icon: "📍" };
   const mapUrl = `https://maps.google.com/?q=${loc.lat},${loc.lng}`;
   return `
     <div class="place-item" id="item-${loc.id}" onclick="focusLocation('${loc.id}')">
@@ -455,14 +371,11 @@ function placeItemHTML(loc) {
 // ──────────────────────────────────────────────
 function renderLegend() {
   const el = document.getElementById("legend");
-  const items = [
-    ...Object.entries(DAY_COLORS).map(([d, v]) => `
+  el.innerHTML = `<div class="legend-title">일정</div>` +
+    Object.entries(DAY_COLORS).map(([d, v]) => `
       <div class="legend-item">
         <div class="legend-dot" style="background:${v.color}"></div>${v.label}
-      </div>`),
-    `<div class="legend-item"><div class="legend-dot" style="background:#94a3b8"></div>미배정</div>`,
-  ];
-  el.innerHTML = `<div class="legend-title">일정</div>${items.join("")}`;
+      </div>`).join("");
 }
 
 // ──────────────────────────────────────────────
@@ -473,16 +386,24 @@ function selectDay(day) {
   renderTabs();
   renderPlaceList();
   renderMarkers();
+
+  if (day !== "all") {
+    const locs = LOCATIONS.filter(l => l.day === Number(day));
+    if (locs.length > 0) {
+      const bounds = L.latLngBounds(locs.map(l => [l.lat, l.lng]));
+      map.fitBounds(bounds, { padding: [40, 40] });
+    }
+  } else {
+    map.setView([43.0686, 141.3506], 12);
+  }
 }
 
 function focusLocation(id) {
   const loc = LOCATIONS.find(l => l.id === id);
   if (!loc || !markers[id]) return;
-  map.panTo({ lat: loc.lat, lng: loc.lng });
-  map.setZoom(14);
-  google.maps.event.trigger(markers[id], "click");
+  map.setView([loc.lat, loc.lng], 15);
+  markers[id].openPopup();
   highlightSidebarItem(id);
-  // 모바일: 장소 선택 시 사이드바 자동 닫기
   if (window.innerWidth <= 640) closeSidebar();
 }
 
@@ -514,28 +435,12 @@ function closeSidebar() {
   document.getElementById("toggleBtn").textContent = "☰";
 }
 
-// API 키 오류 처리
-window.gm_authFailure = function() {
-  document.getElementById("apiWarning").style.display = "block";
-  document.getElementById("map").style.opacity = "0.2";
-};
+// ──────────────────────────────────────────────
+// 초기 실행
+// ──────────────────────────────────────────────
+renderSidebar();
+renderMarkers();
+renderLegend();
 </script>
-
-<!--
-  ========================================================
-  ★ Google Maps API 키 설정 방법
-  ========================================================
-  1. https://console.cloud.google.com/apis/credentials 접속
-  2. '사용자 인증 정보 만들기' → 'API 키' 클릭
-  3. Maps JavaScript API 활성화
-  4. 아래 YOUR_API_KEY 를 발급받은 키로 교체
-  ========================================================
--->
-<script
-  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAhxdwpaGV9CcYGTpL-bVdpxkQfHkxKmvk&callback=initMap&language=ko&region=JP&libraries=marker&v=beta"
-  async defer
-  onerror="document.getElementById('apiWarning').style.display='block'">
-</script>
-
 </body>
 </html>
