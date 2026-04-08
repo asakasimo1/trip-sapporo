@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🗾 삿포로 가족여행</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+    background: linear-gradient(135deg, #1e3a5f 0%, #2563eb 50%, #60a5fa 100%);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .card {
+    background: white;
+    border-radius: 24px;
+    padding: 40px 32px;
+    max-width: 400px;
+    width: 90%;
+    text-align: center;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.2);
+  }
+  h1 { font-size: 22px; font-weight: 800; color: #1e293b; margin-bottom: 6px; }
+  .sub { font-size: 13px; color: #64748b; margin-bottom: 28px; line-height: 1.6; }
+  .btn {
+    display: block;
+    width: 100%;
+    padding: 14px;
+    border-radius: 14px;
+    font-size: 15px;
+    font-weight: 700;
+    text-decoration: none;
+    margin-bottom: 12px;
+    transition: opacity 0.15s;
+  }
+  .btn:hover { opacity: 0.85; }
+  .btn-map { background: linear-gradient(90deg, #2563eb, #60a5fa); color: white; }
+  .btn-plan { background: linear-gradient(90deg, #f97316, #fb923c); color: white; }
+  .badges { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-bottom: 28px; }
+  .badge { background: #f1f5f9; color: #475569; font-size: 12px; font-weight: 600; padding: 4px 12px; border-radius: 20px; }
+</style>
+</head>
+<body>
+<div class="card">
+  <div style="font-size:48px;margin-bottom:12px;">🗾</div>
+  <h1>삿포로 4박5일 가족여행</h1>
+  <div class="sub">2026년 4월 24일 ~ 28일<br>홋카이도 벚꽃 · 오타루 · 쿠키체험 · 온천</div>
+  <div class="badges">
+    <span class="badge">👨‍👩‍👧 3인 가족</span>
+    <span class="badge">🚃 대중교통</span>
+    <span class="badge">🌸 벚꽃 시즌</span>
+  </div>
+  <a class="btn btn-map" href="1_practice/trip_sapporo/map/map.html">🗺️ 일정 지도 보기</a>
+  <a class="btn btn-plan" href="1_practice/trip_sapporo/sapporo_family_trip.html">📋 전체 일정표 보기</a>
+</div>
+</body>
+</html>
