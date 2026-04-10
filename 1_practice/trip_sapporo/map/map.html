@@ -51,7 +51,7 @@
     background: white;
     overflow-y: auto;
     box-shadow: 2px 0 8px rgba(0,0,0,0.07);
-    z-index: 100;
+    z-index: 1100;
     transition: transform 0.3s ease;
   }
 
@@ -61,7 +61,7 @@
     position: absolute;
     inset: 0;
     background: rgba(0,0,0,0.4);
-    z-index: 90;
+    z-index: 1050;
   }
   .sidebar-overlay.visible { display: block; }
 
@@ -73,7 +73,7 @@
       top: 0; left: 0;
       height: 100%;
       transform: translateX(-100%);
-      z-index: 100;
+      z-index: 1100;
     }
     .sidebar.open { transform: translateX(0); }
   }
@@ -175,6 +175,64 @@
   }
   .leaflet-popup-content { margin: 12px 14px !important; min-width: 200px; }
   .leaflet-container a { color: inherit; }
+
+  /* 모바일 바텀 시트 */
+  .bottom-sheet {
+    display: none;
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: white;
+    border-radius: 16px 16px 0 0;
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.2);
+    z-index: 1001;
+    max-height: 65vh;
+    overflow-y: auto;
+    transform: translateY(100%);
+    transition: transform 0.3s ease;
+  }
+  .bottom-sheet.open { transform: translateY(0); }
+  .bottom-sheet-handle {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px 8px;
+    border-bottom: 1px solid #f1f5f9;
+  }
+  .bottom-sheet-handle-bar {
+    width: 36px; height: 4px;
+    background: #cbd5e1;
+    border-radius: 2px;
+    margin: 0 auto 0;
+  }
+  .bottom-sheet-close {
+    background: none; border: none;
+    font-size: 20px; color: #94a3b8;
+    cursor: pointer; line-height: 1;
+    padding: 0 0 0 auto;
+  }
+  .bottom-sheet-body { padding: 12px 16px 24px; }
+  .bs-name { font-size: 16px; font-weight: 800; color: #1e293b; margin-bottom: 2px; }
+  .bs-namejp { font-size: 12px; color: #94a3b8; margin-bottom: 8px; }
+  .bs-desc { font-size: 13px; color: #374151; line-height: 1.6; }
+  .bs-tip {
+    font-size: 12px; color: #92400e;
+    background: #fffbeb;
+    border-left: 3px solid #f59e0b;
+    padding: 6px 10px;
+    margin-top: 8px;
+    border-radius: 0 4px 4px 0;
+  }
+  .bs-links { display: flex; gap: 6px; margin-top: 10px; flex-wrap: wrap; }
+  .bs-day-badge {
+    display: inline-block;
+    font-size: 11px; font-weight: 700;
+    color: white; padding: 2px 10px;
+    border-radius: 10px; margin-bottom: 8px;
+  }
+
+  @media (max-width: 640px) {
+    .bottom-sheet { display: block; }
+  }
 </style>
 </head>
 <body>
@@ -206,6 +264,15 @@
 
 </div>
 
+<!-- 모바일 바텀 시트 -->
+<div class="bottom-sheet" id="bottomSheet">
+  <div class="bottom-sheet-handle">
+    <div class="bottom-sheet-handle-bar"></div>
+    <button class="bottom-sheet-close" onclick="closeBottomSheet()">✕</button>
+  </div>
+  <div class="bottom-sheet-body" id="bottomSheetBody"></div>
+</div>
+
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="locations.js"></script>
 <script>
@@ -229,10 +296,9 @@ L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
 // ──────────────────────────────────────────────
 function createIcon(color, cat, order) {
   const hasOrder = order > 0;
-  const size = hasOrder ? 44 : 38;
+  const size = 38;
   const inner = hasOrder
-    ? `<span style="font-size:18px;line-height:1">${cat.icon}</span>
-       <span style="font-size:11px;font-weight:800;color:white;line-height:1;font-family:Arial,sans-serif">${order}</span>`
+    ? `<span style="font-size:16px;font-weight:800;color:white;line-height:1;font-family:Arial,sans-serif">${order}</span>`
     : `<span style="font-size:20px;line-height:1">${cat.icon}</span>`;
 
   return L.divIcon({
@@ -287,7 +353,10 @@ function renderMarkers() {
       </div>
     `);
 
-    marker.on("click", () => highlightSidebarItem(loc.id));
+    marker.on("click", () => {
+      highlightSidebarItem(loc.id);
+      if (window.innerWidth <= 640) showBottomSheet(loc);
+    });
     markers[loc.id] = marker;
   });
 
@@ -402,15 +471,46 @@ function focusLocation(id) {
   const loc = LOCATIONS.find(l => l.id === id);
   if (!loc || !markers[id]) return;
   map.setView([loc.lat, loc.lng], 15);
-  markers[id].openPopup();
   highlightSidebarItem(id);
-  if (window.innerWidth <= 640) closeSidebar();
+  if (window.innerWidth <= 640) {
+    closeSidebar();
+    showBottomSheet(loc);
+  } else {
+    markers[id].openPopup();
+  }
 }
 
 function highlightSidebarItem(id) {
   document.querySelectorAll(".place-item").forEach(el => el.classList.remove("active"));
   const el = document.getElementById("item-" + id);
   if (el) { el.classList.add("active"); el.scrollIntoView({ block: "nearest" }); }
+}
+
+// ──────────────────────────────────────────────
+// 모바일 바텀 시트
+// ──────────────────────────────────────────────
+function showBottomSheet(loc) {
+  const dayInfo = DAY_COLORS[loc.day] || { color: "#94a3b8", label: "" };
+  const cat = CATEGORY[loc.category] || { icon: "📍" };
+  const mapUrl = `https://maps.google.com/?q=${loc.lat},${loc.lng}`;
+
+  document.getElementById("bottomSheetBody").innerHTML = `
+    <span class="bs-day-badge" style="background:${dayInfo.color}">${dayInfo.label}</span>
+    <div class="bs-name">${cat.icon} ${loc.name}</div>
+    <div class="bs-namejp">${loc.nameJp}</div>
+    <div class="bs-desc">${loc.desc}</div>
+    ${loc.tip ? `<div class="bs-tip">💡 ${loc.tip}</div>` : ""}
+    <div class="bs-links">
+      <a class="link-btn link-btn-map" href="${mapUrl}" target="_blank">🗺 구글맵</a>
+      ${loc.webUrl ? `<a class="link-btn link-btn-web" href="${loc.webUrl}" target="_blank">🔗 공식사이트</a>` : ""}
+    </div>
+  `;
+
+  document.getElementById("bottomSheet").classList.add("open");
+}
+
+function closeBottomSheet() {
+  document.getElementById("bottomSheet").classList.remove("open");
 }
 
 // ──────────────────────────────────────────────
